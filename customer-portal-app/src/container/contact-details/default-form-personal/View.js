@@ -34,11 +34,11 @@ function DefaultContactPersonalView({ initialContact }) {
                     </TextBlock>
                 </Row>
                 <Row>
-                    <TextBlock className={'col-12 col-sm-8'} placeholder={'Voornaam'}>
-                        {person.firstName}
-                    </TextBlock>
                     <TextBlock className={'col-12 col-sm-4'} placeholder={'Initialen'}>
                         {person.initials}
+                    </TextBlock>
+                    <TextBlock className={'col-12 col-sm-8'} placeholder={'Voornaam'}>
+                        {person.firstName}
                     </TextBlock>
                 </Row>
                 <Row>
@@ -112,7 +112,7 @@ function DefaultContactPersonalView({ initialContact }) {
                 </Row>
             </Col>
             <Col xs={12} md={6}>
-                <FormLabel className={'field-label'}>Rekeningnummer</FormLabel>
+                <FormLabel className={'field-label'}>IBAN gegevens</FormLabel>
                 <Row>
                     <TextBlock className={'col-12 col-sm-8'} placeholder={'Rekeningnummer (IBAN)'}>
                         {iban}

@@ -221,7 +221,7 @@ class ParticipationProjectController extends Controller
                 $payoutTypeId = ParticipantProjectPayoutType::where('code_ref', 'account')->value('id');
                 break;
         }
-        $powerKwhConcumption = ($request->powerKwhConsumption && $request->powerKwhConsumption!= '') ?: 0;
+        $powerKwhConsumption = ($request->powerKwhConsumption && $request->powerKwhConsumption!= '') ?: 0;
 
         $participation = ParticipantProject::create([
             'contact_id' => $contact->id,
@@ -231,11 +231,11 @@ class ParticipationProjectController extends Controller
             'date_did_accept_agreement' => $today,
             'did_understand_info' => (bool)$request->didUnderstandInfo,
             'date_did_understand_info'  => $today,
-            'power_kwh_consumption' => $powerKwhConcumption,
+            'power_kwh_consumption' => $powerKwhConsumption,
         ]);
 
-        // vanuit portal standaard altijd status 'interest'
-        $status = ParticipantMutationStatus::where('code_ref', 'interest')->first();
+        // vanuit portal standaard altijd status 'option'
+        $status = ParticipantMutationStatus::where('code_ref', 'option')->first();
 
         $dateInterest = null;
         $amountInterest = 0;
@@ -249,16 +249,19 @@ class ParticipationProjectController extends Controller
         $dateFinal = null;
         $amountFinal = 0;
         $quantityFinal = 0;
-        $participationMutationDate = $today ?: null;
-        $participationMutationAmount = $request->amountInteressed ?: null;
-        $participationMutationQuantity = $request->participationsInteressed ?: null;
+        $participationMutationDate = null;
+        $participationMutationAmount = null;
+        $participationMutationQuantity = null;
 
 
         switch($status->code_ref){
-            case 'interest' :
-                $dateInterest = $participationMutationDate;
-                $amountInterest = $participationMutationAmount;
-                $quantityInterest = $participationMutationQuantity;
+            case 'option' :
+                $participationMutationDate = $today ?: null;
+                $participationMutationAmount = $request->amountOptioned ?: null;
+                $participationMutationQuantity = $request->participationsOptioned ?: null;
+                $dateOption = $participationMutationDate;
+                $amountOption = $participationMutationAmount;
+                $quantityOption = $participationMutationQuantity;
                 break;
         }
 

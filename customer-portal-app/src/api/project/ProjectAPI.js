@@ -37,7 +37,12 @@ export default {
                         'maxParticipations',
                         'totalParticipations',
                         'participationWorth',
+                        'amountOfLoanNeeded',
+                        'minAmountLoan',
+                        'maxAmountLoan',
+                        'postalcodeLink',
                     ],
+                    rlt: { projectType: { fld: ['id', 'codeRef'] } },
                 },
             },
         });

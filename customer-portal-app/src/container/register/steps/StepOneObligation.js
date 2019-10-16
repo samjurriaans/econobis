@@ -4,16 +4,16 @@ import Row from 'react-bootstrap/Row';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Col from 'react-bootstrap/Col';
 import FormLabel from 'react-bootstrap/FormLabel';
-import MoneyPresenter from '../../../../helpers/MoneyPresenter';
-import TextBlock from '../../../../components/general/TextBlock';
+import MoneyPresenter from '../../../helpers/MoneyPresenter';
+import TextBlock from '../../../components/general/TextBlock';
 import Form from 'react-bootstrap/Form';
 import { Field, Formik } from 'formik';
 import * as Yup from 'yup';
-import InputText from '../../../../components/form/InputText';
+import InputText from '../../../components/form/InputText';
 
-function StepOne({ next, project, initialRegisterValues, handleSubmitRegisterValues }) {
+function StepOneObligation({ next, project, initialRegisterValues, handleSubmitRegisterValues }) {
     const validationSchema = Yup.object({
-        participationsInteressed: Yup.number()
+        participationsOptioned: Yup.number()
             .typeError('Alleen nummers')
             .min(1, 'Minimum van ${min} nodig')
             .max(project.maxParticipations, 'Maximum van ${max} bereikt')
@@ -34,29 +34,29 @@ function StepOne({ next, project, initialRegisterValues, handleSubmitRegisterVal
                 <>
                     <Row>
                         <Col xs={12} md={6}>
-                            <FormLabel className={'field-label'}>Minimale aantal participaties</FormLabel>
+                            <FormLabel className={'field-label'}>Minimale aantal obligaties</FormLabel>
                             <TextBlock>{project.minParticipations}</TextBlock>
                         </Col>
                         <Col xs={12} md={6}>
-                            <FormLabel className={'field-label'}>Maximale aantal participaties</FormLabel>
+                            <FormLabel className={'field-label'}>Maximale aantal obligaties</FormLabel>
                             <TextBlock>{project.maxParticipations}</TextBlock>
                         </Col>
 
                         <Col xs={12} md={6}>
-                            <FormLabel className={'field-label'}>Nominale waarde per participatie</FormLabel>
+                            <FormLabel className={'field-label'}>Nominale waarde per obligatie</FormLabel>
                             <TextBlock>{MoneyPresenter(project.participationWorth)}</TextBlock>
                         </Col>
                         <Col xs={12} md={6}>
                             <Form>
-                                <Form.Label className={'field-label'}>Gewenst aantal participaties</Form.Label>
+                                <Form.Label className={'field-label'}>Gewenst aantal obligaties</Form.Label>
                                 <Field
-                                    name="participationsInteressed"
+                                    name="participationsOptioned"
                                     render={({ field }) => (
                                         <InputText
                                             field={field}
                                             errors={errors}
                                             touched={touched}
-                                            id="participations_interessed"
+                                            id="participations_optioned"
                                         />
                                     )}
                                 />
@@ -65,7 +65,7 @@ function StepOne({ next, project, initialRegisterValues, handleSubmitRegisterVal
                         <Col xs={12} md={6}>
                             <FormLabel className={'field-label'}>Te betalen bedrag</FormLabel>
                             <TextBlock>
-                                {MoneyPresenter(values.participationsInteressed * project.participationWorth)}
+                                {MoneyPresenter(values.participationsOptioned * project.participationWorth)}
                             </TextBlock>
                         </Col>
                     </Row>
@@ -85,4 +85,4 @@ function StepOne({ next, project, initialRegisterValues, handleSubmitRegisterVal
     );
 }
 
-export default StepOne;
+export default StepOneObligation;
