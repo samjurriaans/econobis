@@ -78,12 +78,15 @@ class SettingController
             'responsibleUserId',
             'documentTemplateAgreementId',
             'emailTemplateAgreementId',
-            'generatingCapacity1SolarPanel',
+            'linkPrivacyPolicy',
+            'linkAgreeTerms',
+            'linkUnderstandInfo',
         ]);
     }
 
     protected function getStore(): Valuestore
     {
-        return Valuestore::make(database_path('settings.json'));
+        $filePath = (storage_path('app' . DIRECTORY_SEPARATOR . 'portal-settings.json'));
+        return Valuestore::make($filePath);
     }
 }

@@ -58,6 +58,7 @@ class ContactController extends ApiController
                 'didAgreeAvg' => 'boolean',
             ]);
 
+
             $contact->fill($this->arrayKeysToSnakeCase($contactData));
             $contact->save();
 

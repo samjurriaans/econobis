@@ -5,7 +5,7 @@ import TextBlock from '../../../components/general/TextBlock';
 import Row from 'react-bootstrap/Row';
 import moment from 'moment';
 
-function DefaultContactOrganisationView({ initialContact }) {
+function DefaultContactOrganisationView({ portalSettings, initialContact }) {
     const {
         organisation = {},
         emailCorrespondence,
@@ -18,6 +18,7 @@ function DefaultContactOrganisationView({ initialContact }) {
         iban,
         ibanAttn,
         didAgreeAvg,
+        dateDidAgreeAvg,
         number,
         primaryContactEnergySupplier,
         primaryOccupations,
@@ -82,7 +83,15 @@ function DefaultContactOrganisationView({ initialContact }) {
                             disabled={true}
                         />
                         <span htmlFor="did_agree_avg" className="checkbox-label w-form-label">
-                            Akkoord
+                            Ik ga akkoord met{' '}
+                            <a href={portalSettings['linkPrivacyPolicy']} target="_blank">
+                                privacy beleid
+                            </a>{' '}
+                            {didAgreeAvg ? (
+                                <em>({dateDidAgreeAvg ? moment(dateDidAgreeAvg.date).format('L') : ''})</em>
+                            ) : (
+                                ''
+                            )}
                         </span>
                     </TextBlock>
                 </Row>
@@ -116,34 +125,7 @@ function DefaultContactOrganisationView({ initialContact }) {
                 </Row>
             </Col>
             <Col xs={12} md={6}>
-                <FormLabel className={'field-label'}>Bezoekadres{visitAddress.primary ? ' (primair)' : ''}</FormLabel>
-                <Row>
-                    <TextBlock className={'col-12 col-sm-8'} placeholder={'Straat'}>
-                        {visitAddress.street}
-                    </TextBlock>
-                </Row>
-                <Row>
-                    <TextBlock className={'col-12 col-sm-4'} placeholder={'Nummer'}>
-                        {visitAddress.number}
-                    </TextBlock>
-                    <TextBlock className={'col-6 col-sm-4 '} placeholder={'Toevoeging'}>
-                        {visitAddress.addition}
-                    </TextBlock>
-                </Row>
-                <Row>
-                    <TextBlock className={'col-12 col-sm-4'} placeholder={'Postcode'}>
-                        {visitAddress.postalCode}
-                    </TextBlock>
-                    <TextBlock className={'col-12 col-sm-6'} placeholder={'Plaats'}>
-                        {visitAddress.city}
-                    </TextBlock>
-                </Row>
-                <Row>
-                    <TextBlock className={'col-12 col-sm-8'} placeholder={'Land'}>
-                        {visitAddress.countryId}
-                    </TextBlock>
-                </Row>
-                <FormLabel className={'field-label'}>Postadres{postalAddress.primary ? ' (primair)' : ''}</FormLabel>
+                <FormLabel className={'field-label'}>Postadres</FormLabel>
                 <Row>
                     <TextBlock className={'col-12 col-sm-8'} placeholder={'Straat'}>
                         {postalAddress.street}
@@ -170,9 +152,34 @@ function DefaultContactOrganisationView({ initialContact }) {
                         {postalAddress.countryId}
                     </TextBlock>
                 </Row>
-                <FormLabel className={'field-label'}>
-                    Factuur adres{invoiceAddress.primary ? ' (primair)' : ''}
-                </FormLabel>
+                <FormLabel className={'field-label'}>Bezoekadres</FormLabel>
+                <Row>
+                    <TextBlock className={'col-12 col-sm-8'} placeholder={'Straat'}>
+                        {visitAddress.street}
+                    </TextBlock>
+                </Row>
+                <Row>
+                    <TextBlock className={'col-12 col-sm-4'} placeholder={'Nummer'}>
+                        {visitAddress.number}
+                    </TextBlock>
+                    <TextBlock className={'col-6 col-sm-4 '} placeholder={'Toevoeging'}>
+                        {visitAddress.addition}
+                    </TextBlock>
+                </Row>
+                <Row>
+                    <TextBlock className={'col-12 col-sm-4'} placeholder={'Postcode'}>
+                        {visitAddress.postalCode}
+                    </TextBlock>
+                    <TextBlock className={'col-12 col-sm-6'} placeholder={'Plaats'}>
+                        {visitAddress.city}
+                    </TextBlock>
+                </Row>
+                <Row>
+                    <TextBlock className={'col-12 col-sm-8'} placeholder={'Land'}>
+                        {visitAddress.countryId}
+                    </TextBlock>
+                </Row>
+                <FormLabel className={'field-label'}>Factuuradres</FormLabel>
                 <Row>
                     <TextBlock className={'col-12 col-sm-8'} placeholder={'Straat'}>
                         {invoiceAddress.street}

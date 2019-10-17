@@ -9,7 +9,7 @@ import Row from 'react-bootstrap/Row';
 import TextBlock from '../../../components/general/TextBlock';
 import moment from 'moment';
 
-const DefaultContactOrganisationEdit = function({ handleSubmit, initialContact, touched, errors, values }) {
+const DefaultContactOrganisationEdit = function({ portalSettings, initialContact, touched, errors, values }) {
     return (
         <Row>
             <Col xs={12} md={6}>
@@ -144,8 +144,22 @@ const DefaultContactOrganisationEdit = function({ handleSubmit, initialContact, 
                                         disabled={initialContact.didAgreeAvg}
                                     />
                                     <span htmlFor="did_agree_avg" className="checkbox-label w-form-label">
-                                        Akkoord
-                                    </span>
+                                        Ik ga akkoord met{' '}
+                                        <a href={portalSettings['linkPrivacyPolicy']} target="_blank">
+                                            privacy beleid
+                                        </a>
+                                    </span>{' '}
+                                    {values.didAgreeAvg ? (
+                                        <em>
+                                            (
+                                            {initialContact.dateDidAgreeAvg
+                                                ? moment(initialContact.dateDidAgreeAvg.date).format('L')
+                                                : moment().format('L')}
+                                            )
+                                        </em>
+                                    ) : (
+                                        ''
+                                    )}
                                 </label>
                             )}
                         />
@@ -235,105 +249,7 @@ const DefaultContactOrganisationEdit = function({ handleSubmit, initialContact, 
 
             <Col xs={12} md={6}>
                 <FormLabel htmlFor="street" className="field-label">
-                    Bezoekadres{values.visitAddress.primary ? ' (primair)' : ''}
-                </FormLabel>
-                <Row>
-                    <Col xs={12} sm={12}>
-                        <Field
-                            name="visitAddress.street"
-                            render={({ field }) => (
-                                <InputText
-                                    field={field}
-                                    errors={errors}
-                                    touched={touched}
-                                    id="street"
-                                    placeholder={'Straat'}
-                                />
-                            )}
-                        />
-                    </Col>
-                </Row>
-
-                <Row>
-                    <Col xs={12} sm={4}>
-                        <Field
-                            name="visitAddress.number"
-                            render={({ field }) => (
-                                <InputText
-                                    field={field}
-                                    errors={errors}
-                                    touched={touched}
-                                    id="street_number"
-                                    placeholder={'Nummer'}
-                                />
-                            )}
-                        />
-                    </Col>
-                    <Col xs={12} sm={4}>
-                        <Field
-                            name="visitAddress.addition"
-                            render={({ field }) => (
-                                <InputText
-                                    field={field}
-                                    errors={errors}
-                                    touched={touched}
-                                    id="addition"
-                                    placeholder={'Toevoeging'}
-                                />
-                            )}
-                        />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col xs={12} sm={4}>
-                        <Field
-                            name="visitAddress.postalCode"
-                            render={({ field }) => (
-                                <InputText
-                                    field={field}
-                                    errors={errors}
-                                    touched={touched}
-                                    id="postal_code"
-                                    placeholder={'Postcode'}
-                                />
-                            )}
-                        />
-                    </Col>
-                    <Col xs={12} sm={8}>
-                        <Field
-                            name="visitAddress.city"
-                            render={({ field }) => (
-                                <InputText
-                                    field={field}
-                                    errors={errors}
-                                    touched={touched}
-                                    id="city"
-                                    placeholder={'Plaats'}
-                                />
-                            )}
-                        />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col xs={12} sm={8}>
-                        <Field
-                            name="visitAddress.countryId"
-                            render={({ field }) => (
-                                <Select
-                                    field={field}
-                                    errors={errors}
-                                    touched={touched}
-                                    id="country_id"
-                                    placeholder={'Selecteer uw land'}
-                                    options={Countries}
-                                />
-                            )}
-                        />
-                    </Col>
-                </Row>
-
-                <FormLabel htmlFor="street" className="field-label">
-                    Postadres{values.postalAddress.primary ? ' (primair)' : ''}
+                    Postadres
                 </FormLabel>
                 <Row>
                     <Col xs={12} sm={12}>
@@ -431,7 +347,105 @@ const DefaultContactOrganisationEdit = function({ handleSubmit, initialContact, 
                 </Row>
 
                 <FormLabel htmlFor="street" className="field-label">
-                    Factuurdres{values.invoiceAddress.primary ? ' (primair)' : ''}
+                    Bezoekadres
+                </FormLabel>
+                <Row>
+                    <Col xs={12} sm={12}>
+                        <Field
+                            name="visitAddress.street"
+                            render={({ field }) => (
+                                <InputText
+                                    field={field}
+                                    errors={errors}
+                                    touched={touched}
+                                    id="street"
+                                    placeholder={'Straat'}
+                                />
+                            )}
+                        />
+                    </Col>
+                </Row>
+
+                <Row>
+                    <Col xs={12} sm={4}>
+                        <Field
+                            name="visitAddress.number"
+                            render={({ field }) => (
+                                <InputText
+                                    field={field}
+                                    errors={errors}
+                                    touched={touched}
+                                    id="street_number"
+                                    placeholder={'Nummer'}
+                                />
+                            )}
+                        />
+                    </Col>
+                    <Col xs={12} sm={4}>
+                        <Field
+                            name="visitAddress.addition"
+                            render={({ field }) => (
+                                <InputText
+                                    field={field}
+                                    errors={errors}
+                                    touched={touched}
+                                    id="addition"
+                                    placeholder={'Toevoeging'}
+                                />
+                            )}
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xs={12} sm={4}>
+                        <Field
+                            name="visitAddress.postalCode"
+                            render={({ field }) => (
+                                <InputText
+                                    field={field}
+                                    errors={errors}
+                                    touched={touched}
+                                    id="postal_code"
+                                    placeholder={'Postcode'}
+                                />
+                            )}
+                        />
+                    </Col>
+                    <Col xs={12} sm={8}>
+                        <Field
+                            name="visitAddress.city"
+                            render={({ field }) => (
+                                <InputText
+                                    field={field}
+                                    errors={errors}
+                                    touched={touched}
+                                    id="city"
+                                    placeholder={'Plaats'}
+                                />
+                            )}
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xs={12} sm={8}>
+                        <Field
+                            name="visitAddress.countryId"
+                            render={({ field }) => (
+                                <Select
+                                    field={field}
+                                    errors={errors}
+                                    touched={touched}
+                                    id="country_id"
+                                    placeholder={'Selecteer uw land'}
+                                    options={Countries}
+                                />
+                            )}
+                        />
+                    </Col>
+                </Row>
+
+                <FormLabel htmlFor="street" className="field-label">
+                    Factuuradres
                 </FormLabel>
                 <Row>
                     <Col xs={12} sm={12}>

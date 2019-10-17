@@ -5,7 +5,7 @@ import TextBlock from '../../../components/general/TextBlock';
 import Row from 'react-bootstrap/Row';
 import moment from 'moment';
 
-function DefaultContactPersonalView({ initialContact }) {
+function DefaultContactPersonalView({ portalSettings, initialContact }) {
     const {
         person = {},
         emailCorrespondence,
@@ -16,6 +16,7 @@ function DefaultContactPersonalView({ initialContact }) {
         iban,
         ibanAttn,
         didAgreeAvg,
+        dateDidAgreeAvg,
         number,
         primaryContactEnergySupplier,
     } = initialContact;
@@ -135,7 +136,15 @@ function DefaultContactPersonalView({ initialContact }) {
                             disabled={true}
                         />
                         <span htmlFor="did_agree_avg" className="checkbox-label w-form-label">
-                            Akkoord
+                            Ik ga akkoord met{' '}
+                            <a href={portalSettings['linkPrivacyPolicy']} target="_blank">
+                                privacy beleid
+                            </a>{' '}
+                            {didAgreeAvg ? (
+                                <em>({dateDidAgreeAvg ? ' ' + moment(dateDidAgreeAvg.date).format('L') : ''})</em>
+                            ) : (
+                                ''
+                            )}
                         </span>
                     </TextBlock>
                 </Row>
