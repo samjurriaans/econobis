@@ -18,15 +18,35 @@ export default {
                         'addressLines',
                     ],
                     rlt: {
-                        primaryOccupations: {
-                            fld: ['id', 'contactId'],
+                        occupations: {
+                            fld: ['id', 'occupationId', 'primaryContactId', 'contactId'],
                             rlt: {
-                                contact: ['id', 'number', 'fullName'],
+                                occupation: {
+                                    fld: ['id', 'primaryOccupation', 'secondaryOccupation'],
+                                },
+                                primaryContact: { fld: ['id', 'fullName'] },
+                                contact: { fld: ['id', 'fullName'] },
                             },
                         },
                     },
                 },
             },
         });
+    },
+
+    fetchPortalUserEmail: function() {
+        return axiosInstance.get(`/portal-user-email`);
+    },
+
+    changeEmail: values => {
+        const requestUrl = `/portal-user/change-email`;
+
+        return axiosInstance.post(requestUrl, values);
+    },
+
+    changePassword: values => {
+        const requestUrl = `/portal-user/change-password`;
+
+        return axiosInstance.post(requestUrl, values);
     },
 };

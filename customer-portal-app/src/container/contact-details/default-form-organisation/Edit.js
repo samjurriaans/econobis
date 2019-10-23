@@ -8,8 +8,17 @@ import FormLabel from 'react-bootstrap/FormLabel';
 import Row from 'react-bootstrap/Row';
 import TextBlock from '../../../components/general/TextBlock';
 import moment from 'moment';
+import EnergySuppliers from '../../../data/EnergySuppliers';
+import InputDate from '../../../components/form/InputDate';
 
-const DefaultContactOrganisationEdit = function({ portalSettings, initialContact, touched, errors, values }) {
+const DefaultContactOrganisationEdit = function({
+    portalSettings,
+    initialContact,
+    errors,
+    touched,
+    values,
+    setFieldValue,
+}) {
     return (
         <Row>
             <Col xs={12} md={6}>
@@ -187,7 +196,7 @@ const DefaultContactOrganisationEdit = function({ portalSettings, initialContact
                 </Row>
 
                 <FormLabel htmlFor="email-invoice" className="field-label">
-                    E-mailadres factuur
+                    E-mailadres nota
                 </FormLabel>
                 <Row>
                     <Col xs={12} sm={12} md={8}>
@@ -445,7 +454,7 @@ const DefaultContactOrganisationEdit = function({ portalSettings, initialContact
                 </Row>
 
                 <FormLabel htmlFor="street" className="field-label">
-                    Factuuradres
+                    Nota adres
                 </FormLabel>
                 <Row>
                     <Col xs={12} sm={12}>
@@ -542,65 +551,158 @@ const DefaultContactOrganisationEdit = function({ portalSettings, initialContact
                     </Col>
                 </Row>
 
-                <FormLabel className={'field-label'}>Energieleverancier</FormLabel>
-                {values.primaryContactEnergySupplier ? (
-                    <Row>
-                        <div className="current_es_wrapper col-12">
-                            <h3 id="current_es_id" className="h3">
-                                {values.primaryContactEnergySupplier.energySupplier.name}
-                            </h3>
-                            <Row>
-                                <Col>
-                                    <FormLabel>Nummer leverancier</FormLabel>
-                                </Col>
-                                <Col>-</Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <FormLabel>Klant sinds</FormLabel>
-                                </Col>
-                                <Col>
-                                    {values.primaryContactEnergySupplier.memberSince
-                                        ? moment(values.primaryContactEnergySupplier.memberSince).format('L')
-                                        : ''}
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <FormLabel>EAN nummer electriciteit</FormLabel>
-                                </Col>
-                                <Col>{values.primaryContactEnergySupplier.eanElectricity}</Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <FormLabel>Klant nummer</FormLabel>
-                                </Col>
-                                <Col>{values.primaryContactEnergySupplier.esNumber}</Col>
-                            </Row>
-                        </div>
-                    </Row>
-                ) : (
-                    <Row>
-                        <TextBlock className={'col-12 col-sm-8'} />
-                    </Row>
-                )}
-                <FormLabel className={'field-label'}>Contacten</FormLabel>
-                {values.primaryOccupations ? (
-                    values.primaryOccupations.map(primaryOccupation => (
+                <FormLabel htmlFor="energy_supplier_id" className={'field-label'}>
+                    Energieleverancier
+                </FormLabel>
+                <Row>
+                    <Col xs={12} sm={12} md={8}>
+                        <Field
+                            name="primaryContactEnergySupplier.energySupplierId"
+                            render={({ field }) => (
+                                <Select
+                                    field={field}
+                                    errors={errors}
+                                    touched={touched}
+                                    id="energy_supplier_id"
+                                    placeholder={'Selecteer uw leverancier'}
+                                    options={EnergySuppliers}
+                                    disabled={
+                                        initialContact.primaryContactEnergySupplier &&
+                                        initialContact.primaryContactEnergySupplier.energySupplierId &&
+                                        initialContact.isParticipant
+                                    }
+                                />
+                            )}
+                        />
+                    </Col>
+                </Row>
+
+                {values.primaryContactEnergySupplier && values.primaryContactEnergySupplier.energySupplierId ? (
+                    <>
+                        <FormLabel htmlFor="es_number" className={'field-label'}>
+                            Klant nummer bij leverancier
+                        </FormLabel>
                         <Row>
-                            <TextBlock className={'col-12 col-sm-4'} placeholder={'Contact naam'}>
-                                {primaryOccupation.contact.fullName}
-                            </TextBlock>
-                            <TextBlock className={'col-12 col-sm-4'} placeholder={'Contact verbinding'}>
-                                {primaryOccupation.occupation.primaryOccupation}
-                            </TextBlock>
+                            <Col xs={12} sm={12} md={8}>
+                                <Field
+                                    name="primaryContactEnergySupplier.esNumber"
+                                    render={({ field }) => (
+                                        <InputText
+                                            field={field}
+                                            errors={errors}
+                                            touched={touched}
+                                            id="es_number"
+                                            placeholder={'Klant nummer bij leverancier'}
+                                            disabled={
+                                                initialContact.primaryContactEnergySupplier &&
+                                                initialContact.primaryContactEnergySupplier.energySupplierId &&
+                                                initialContact.primaryContactEnergySupplier.esNumber &&
+                                                initialContact.isParticipant
+                                            }
+                                        />
+                                    )}
+                                />
+                            </Col>
                         </Row>
-                    ))
+
+                        <FormLabel htmlFor="member_since" className={'field-label'}>
+                            Klant bij leverancier sinds
+                        </FormLabel>
+                        <Row>
+                            <Col xs={12} sm={12} md={8}>
+                                <Field
+                                    name="primaryContactEnergySupplier.memberSince"
+                                    render={({ field }) => (
+                                        <InputDate
+                                            {...field}
+                                            errors={errors}
+                                            touched={touched}
+                                            onChangeAction={setFieldValue}
+                                            id="member_since"
+                                            placeholder={'Klant sinds'}
+                                            readOnly={
+                                                initialContact.primaryContactEnergySupplier &&
+                                                initialContact.primaryContactEnergySupplier.energySupplierId &&
+                                                initialContact.primaryContactEnergySupplier.memberSince
+                                            }
+                                        />
+                                    )}
+                                />
+                            </Col>
+                        </Row>
+
+                        <FormLabel htmlFor="ean_electricity" className={'field-label'}>
+                            EAN nummer electriciteit
+                        </FormLabel>
+                        <Row>
+                            <Col xs={12} sm={12} md={8}>
+                                <Field
+                                    name="primaryContactEnergySupplier.eanElectricity"
+                                    render={({ field }) => (
+                                        <InputText
+                                            field={field}
+                                            errors={errors}
+                                            touched={touched}
+                                            id="ean_electricity"
+                                            placeholder={'EAN nummer electriciteit'}
+                                            disabled={
+                                                initialContact.primaryContactEnergySupplier &&
+                                                initialContact.primaryContactEnergySupplier.energySupplierId &&
+                                                initialContact.primaryContactEnergySupplier.eanElectricity &&
+                                                initialContact.isParticipant
+                                            }
+                                        />
+                                    )}
+                                />
+                            </Col>
+                        </Row>
+
+                        <FormLabel htmlFor="ean_gas" className={'field-label'}>
+                            EAN nummer gas
+                        </FormLabel>
+                        <Row>
+                            <Col xs={12} sm={12} md={8}>
+                                <Field
+                                    name="primaryContactEnergySupplier.eanGas"
+                                    render={({ field }) => (
+                                        <InputText
+                                            field={field}
+                                            errors={errors}
+                                            touched={touched}
+                                            id="ean_gas"
+                                            placeholder={'EAN nummer electriciteit'}
+                                            disabled={
+                                                initialContact.primaryContactEnergySupplier &&
+                                                initialContact.primaryContactEnergySupplier.energySupplierId &&
+                                                initialContact.primaryContactEnergySupplier.eanGas
+                                            }
+                                        />
+                                    )}
+                                />
+                            </Col>
+                        </Row>
+                    </>
                 ) : (
-                    <Row>
-                        <TextBlock className={'col-12 col-sm-8'} />
-                    </Row>
+                    ''
                 )}
+
+                {/*<FormLabel className={'field-label'}>Contacten</FormLabel>*/}
+                {/*{values.primaryOccupations ? (*/}
+                {/*values.primaryOccupations.map(primaryOccupation => (*/}
+                {/*<Row>*/}
+                {/*<TextBlock className={'col-12 col-sm-4'} placeholder={'Contact naam'}>*/}
+                {/*{primaryOccupation.contact.fullName}*/}
+                {/*</TextBlock>*/}
+                {/*<TextBlock className={'col-12 col-sm-4'} placeholder={'Contact verbinding'}>*/}
+                {/*{primaryOccupation.occupation.primaryOccupation}*/}
+                {/*</TextBlock>*/}
+                {/*</Row>*/}
+                {/*))*/}
+                {/*) : (*/}
+                {/*<Row>*/}
+                {/*<TextBlock className={'col-12 col-sm-8'} />*/}
+                {/*</Row>*/}
+                {/*)}*/}
             </Col>
         </Row>
     );

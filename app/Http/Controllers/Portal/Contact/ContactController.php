@@ -7,8 +7,11 @@ namespace App\Http\Controllers\Portal\Contact;
 use App\Eco\Address\Address;
 use App\Eco\Address\AddressType;
 use App\Eco\Contact\Contact;
+use App\Eco\Contact\ContactType;
 use App\Eco\EmailAddress\EmailAddress;
 use App\Eco\EmailAddress\EmailAddressType;
+use App\Eco\EnergySupplier\ContactEnergySupplier;
+use App\Eco\EnergySupplier\ContactEnergySupplierType;
 use App\Eco\LastNamePrefix\LastNamePrefix;
 use App\Eco\PhoneNumber\PhoneNumber;
 use App\Eco\PhoneNumber\PhoneNumberType;
@@ -30,7 +33,6 @@ class ContactController extends ApiController
         if (!isset($request) || !isset($request->id) || !isset($request->typeId)) {
             abort(501, 'Er is helaas een fout opgetreden.');
         }
-
         // todo wellicht met binnenkomend contactOrigineel checken of contact ondertussen gewijzigd is?
 
         // ophalen contactgegevens portal user (vertegenwoordiger)
@@ -63,7 +65,7 @@ class ContactController extends ApiController
             $contact->save();
 
             // PERSON
-            if ($request->typeId == 'person') {
+            if ($request->typeId == ContactType::PERSON) {
 
                 $this->updatePerson($contact, $request);
                 $this->updateEmailCorrespondence($contact, $request);
@@ -71,13 +73,15 @@ class ContactController extends ApiController
                 $this->updatePhoneNumberPrimary($contact, $request);
                 $this->updatePhoneNumberTwo($contact, $request);
                 if (isset($request['primaryAddress'])) {
-                    $this->updateAddress($contact, $request['primaryAddress']);
+                    $this->updateAddress($contact, $request['primaryAddress'], 'invoice');
                 }
-
+                if (isset($request['primaryContactEnergySupplier']) && $request['primaryContactEnergySupplier'] != null ) {
+                    $this->updateEnergySupplierToContact($contact, $request['primaryContactEnergySupplier']);
+                }
             }
 
             // ORGANISATION
-            if ($request->typeId == 'organisation') {
+            if ($request->typeId == ContactType::ORGANISATION) {
 
                 $this->updateOrganisation($contact, $request);
                 $this->updateEmailCorrespondence($contact, $request);
@@ -85,13 +89,16 @@ class ContactController extends ApiController
                 $this->updatePhoneNumberPrimary($contact, $request);
                 $this->updatePhoneNumberTwo($contact, $request);
                 if (isset($request['visitAddress'])) {
-                    $this->updateAddress($contact, $request['visitAddress']);
+                    $this->updateAddress($contact, $request['visitAddress'], 'visit');
                 }
                 if (isset($request['postalAddress'])) {
-                    $this->updateAddress($contact, $request['postalAddress']);
+                    $this->updateAddress($contact, $request['postalAddress'], 'postal');
                 }
                 if (isset($request['invoiceAddress'])) {
-                    $this->updateAddress($contact, $request['invoiceAddress']);
+                    $this->updateAddress($contact, $request['invoiceAddress'], 'invoice');
+                }
+                if (isset($request['primaryContactEnergySupplier']) && $request['primaryContactEnergySupplier'] != null ) {
+                    $this->updateEnergySupplierToContact($contact, $request['primaryContactEnergySupplier']);
                 }
             }
 
@@ -215,7 +222,13 @@ class ContactController extends ApiController
             if (isset($phoneNumberPrimaryData['id'])) {
                 $phoneNumberPrimary = $contact->phoneNumbers->find($phoneNumberPrimaryData['id']);
                 if ($phoneNumberPrimary) {
-                    $phoneNumberPrimary->fill($this->arrayKeysToSnakeCase($phoneNumberPrimaryData));
+                    if(empty($phoneNumberPrimaryData['number']) )
+                    {
+                        $phoneNumberPrimary->delete();
+                    }else{
+                        $phoneNumberPrimary->fill($this->arrayKeysToSnakeCase($phoneNumberPrimaryData));
+                        $phoneNumberPrimary->save();
+                    }
                 }
 
             } else {
@@ -247,8 +260,15 @@ class ContactController extends ApiController
             $phoneNumberTwoData = $request['phoneNumberTwo'];
             if (isset($phoneNumberTwoData['id'])) {
                 $phoneNumberTwo = $contact->phoneNumbers->find($phoneNumberTwoData['id']);
+
                 if ($phoneNumberTwo) {
-                    $phoneNumberTwo->fill($this->arrayKeysToSnakeCase($phoneNumberTwoData));
+                    if(empty($phoneNumberTwoData['number']) )
+                    {
+                        $phoneNumberTwo->delete();
+                    }else{
+                        $phoneNumberTwo->fill($this->arrayKeysToSnakeCase($phoneNumberTwoData));
+                        $phoneNumberTwo->save();
+                    }
                 }
 
             } else {
@@ -268,25 +288,36 @@ class ContactController extends ApiController
 
                 $phoneNumberTwo = new PhoneNumber($this->arrayKeysToSnakeCase($phoneNumberTwoData));
                 $phoneNumberTwo->contact_id = $contact->id;
+                $phoneNumberTwo->save();
             }
-            $phoneNumberTwo->save();
         }
 
     }
 
-    protected function updateAddress($contact, $addressData)
+    protected function updateAddress($contact, $addressData, $addressType)
     {
+        if($addressData['countryId'] == ''){
+            $addressData['countryId'] = null;
+        }
+        if($addressData['number'] == ''){
+            $addressData['number'] = null;
+        }
         if (isset($addressData['id']))
         {
-            $primaryAddress
-                = $contact->addresses->find($addressData['id']);
-            if ($primaryAddress)
+            $address = $contact->addresses->find($addressData['id']);
+            if ($address)
             {
-                $primaryAddress->fill($this->arrayKeysToSnakeCase($addressData));
+                if(empty($addressData['street']) && empty($addressData['postalCode']) && empty($addressData['city']) )
+                {
+                    $address->delete();
+                }else{
+                    $address->fill($this->arrayKeysToSnakeCase($addressData));
+                    $address->save();
+                }
             }
 
         }else{
-            $addressData['typeId'] = 'invoice';
+            $addressData['typeId'] = $addressType;
             $addressData['primary'] = true;
 
             Validator::make($addressData, [
@@ -300,10 +331,62 @@ class ContactController extends ApiController
                 'primary' => 'boolean',
             ]);
 
-            $primaryAddress = new Address($this->arrayKeysToSnakeCase($addressData));
-            $primaryAddress->contact_id = $contact->id;
+            $address = new Address($this->arrayKeysToSnakeCase($addressData));
+            $address->contact_id = $contact->id;
+            $address->save();
         }
-        $primaryAddress->save();
     }
+
+    protected function updateEnergySupplierToContact(Contact $contact, $primaryContactEnergySupplierData)
+    {
+        if($primaryContactEnergySupplierData['energySupplierId'] == ''){
+            $primaryContactEnergySupplierData['energySupplierId'] = null;
+        }
+        if($primaryContactEnergySupplierData['memberSince'] == ''){
+            $primaryContactEnergySupplierData['memberSince'] = null;
+        }
+        if (isset($primaryContactEnergySupplierData['id']))
+        {
+            $primaryContactEnergySupplier = $contact->contactEnergySuppliers->find($primaryContactEnergySupplierData['id']);
+            if ($primaryContactEnergySupplier)
+            {
+                if($primaryContactEnergySupplierData['energySupplierId'] == null)
+                {
+                    $primaryContactEnergySupplier->delete();
+                }else {
+                    unset($primaryContactEnergySupplierData['energySupplier']);
+                    $primaryContactEnergySupplier->fill($this->arrayKeysToSnakeCase($primaryContactEnergySupplierData));
+                    $primaryContactEnergySupplier->save();
+                }
+            }
+        }else{
+            if($primaryContactEnergySupplierData['energySupplierId'] != null)
+            {
+                $primaryContactEnergySupplierData['isCurrentSupplier'] = true;
+                $primaryContactEnergySupplierData['contactEnergySupplyTypeId'] = 2;
+                if(isset($primaryContactEnergySupplierData['eanGas']) && trim($primaryContactEnergySupplierData['eanGas']) != '' )
+                {
+                    $primaryContactEnergySupplierData['contactEnergySupplyTypeId'] = 3;
+                }
+
+                Validator::make($primaryContactEnergySupplierData, [
+                    'contactEnergySupplyTypeId' => new EnumExists(ContactEnergySupplierType::class),
+                    'isCurrentSupplier' => 'boolean',
+                ]);
+
+                $primaryContactEnergySupplierData = $this->sanitizeData($primaryContactEnergySupplierData, [
+                    'contactEnergySupplyTypeId' => 'nullable',
+                    'isCurrentSupplier' => 'boolean',
+                ]);
+
+                $primaryContactEnergySupplier = new ContactEnergySupplier($this->arrayKeysToSnakeCase($primaryContactEnergySupplierData));
+                $primaryContactEnergySupplier->contact_id = $contact->id;
+                $primaryContactEnergySupplier->save();
+
+            }
+       }
+
+    }
+
 
 }

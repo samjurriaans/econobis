@@ -7,12 +7,20 @@ use JosKolenberg\LaravelJory\Http\Controllers\JoryController;
 Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
 Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 Route::post('register', 'Auth\RegisterController@register');
+Route::post('new-account', 'Auth\NewAccountController@createNewAccount');
 
 Route::middleware(['auth:api', 'scopes:use-portal'])
     ->group(function () {
         Route::get('/me', function () {
             return Jory::on(\Auth::user()->contact);
         });
+
+        Route::get('/portal-user-email', function () {
+            return \Auth::user()->email;
+        });
+
+        Route::post('/portal-user/change-email', 'PortalUser\PortalUserController@changeEmail');
+        Route::post('/portal-user/change-password', 'PortalUser\PortalUserController@changePassword');
 
         Route::post('/contact/{contact}', 'Contact\ContactController@update');
 

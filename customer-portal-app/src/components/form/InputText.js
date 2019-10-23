@@ -13,22 +13,24 @@ const InputText = ({
     errors,
     touched,
     classNameErrorMessage,
+    disabled,
 }) => {
     return (
         <>
+            {get(errors, field.name, '') && get(touched, field.name, '') && showErrorMessage ? (
+                <small className={`${classNameErrorMessage}`}>{get(errors, field.name, '')}</small>
+            ) : null}
             <input
                 type={type}
                 className={`text-input w-input ${className} ${
-                    Boolean(errors[field.name] && touched[field.name]) ? 'has-error mb-0' : ''
+                    Boolean(get(errors, field.name, '') && get(touched, field.name, '')) ? 'has-error mb-0' : ''
                 } `}
                 id={id}
                 {...field}
                 readOnly={readOnly}
                 placeholder={placeholder}
+                disabled={disabled}
             />
-            {get(errors, field.name, '') && get(touched, field.name, '') && showErrorMessage ? (
-                <small className={`${classNameErrorMessage}`}>{get(errors, field.name, '')}</small>
-            ) : null}
         </>
     );
 };
