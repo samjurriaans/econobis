@@ -4,6 +4,7 @@ import Col from 'react-bootstrap/Col';
 import FormLabel from 'react-bootstrap/FormLabel';
 import moment from 'moment';
 import TextBlock from '../../../components/general/TextBlock';
+import MoneyPresenter from '../../../helpers/MoneyPresenter';
 
 function PcrDetails({ project }) {
     return (
@@ -15,15 +16,15 @@ function PcrDetails({ project }) {
                 </Col>
                 <Col xs={12} md={6}>
                     <FormLabel>Omschrijving project</FormLabel>
-                    <TextBlock>{project.description}</TextBlock>
+                    <TextBlock>{project.description ? project.description : ' '}</TextBlock>
                 </Col>
 
                 <Col xs={12} md={6}>
                     <FormLabel>Nominale waarde per participatie</FormLabel>
-                    <TextBlock>{project.participationWorth}</TextBlock>
+                    <TextBlock>{MoneyPresenter(project.participationWorth)}</TextBlock>
                 </Col>
                 <Col xs={12} md={6}>
-                    <FormLabel>Aantal participaties</FormLabel>
+                    <FormLabel>Aantal participaties nodig</FormLabel>
                     <TextBlock>{project.totalParticipations}</TextBlock>
                 </Col>
                 <Col xs={12} md={6}>

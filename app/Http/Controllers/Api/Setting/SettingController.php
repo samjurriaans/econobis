@@ -73,9 +73,11 @@ class SettingController
     protected function isWhiteListed($key): bool
     {
         return in_array($key, [
+            'portalWebsite',
             'portalUrl',
             'backgroundColor',
             'responsibleUserId',
+            'checkContactTaskResponsibleUserId',
             'documentTemplateAgreementId',
             'emailTemplateAgreementId',
             'emailTemplateNewAccountId',

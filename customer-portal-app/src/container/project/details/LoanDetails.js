@@ -16,11 +16,7 @@ function LoanDetails({ project }) {
                 </Col>
                 <Col xs={12} md={6}>
                     <FormLabel>Omschrijving project</FormLabel>
-                    <TextBlock>{project.description}</TextBlock>
-                </Col>
-                <Col xs={12} md={6}>
-                    <FormLabel>Lening nodig</FormLabel>
-                    <TextBlock>{MoneyPresenter(project.amountOfLoanNeeded)}</TextBlock>
+                    <TextBlock>{project.description ? project.description : ' '}</TextBlock>
                 </Col>
                 <Col xs={12} md={6}>
                     <FormLabel>Minimaal bedrag per contact</FormLabel>

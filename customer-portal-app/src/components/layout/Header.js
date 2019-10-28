@@ -116,11 +116,17 @@ function Header({ location, history }) {
                                                                 <Dropdown.Item>
                                                                     <Link
                                                                         to={'/wijzig-inloggegevens'}
-                                                                        class={'dropdown-link'}
+                                                                        className={'dropdown-link'}
                                                                     >
                                                                         Wijzig inloggegevens
                                                                     </Link>
                                                                 </Dropdown.Item>
+                                                                {/*<Dropdown.Item*/}
+                                                                {/*href={'#/wijzig-inloggegevens'}*/}
+                                                                {/*className={'dropdown-link'}*/}
+                                                                {/*>*/}
+                                                                {/*Wijzig inloggegevens*/}
+                                                                {/*</Dropdown.Item>*/}
                                                                 <Dropdown.Divider />
                                                                 <Dropdown.Header>Beheren van</Dropdown.Header>
                                                                 <Dropdown.Item
@@ -137,25 +143,37 @@ function Header({ location, history }) {
                                                                     {user.fullName}
                                                                 </Dropdown.Item>
                                                                 {user.occupations
-                                                                    ? user.occupations.map(occupation => (
-                                                                          <Dropdown.Item
-                                                                              key={occupation.id}
-                                                                              onClick={() => {
-                                                                                  setCurrentContact(
-                                                                                      occupation.primaryContact
-                                                                                  );
-                                                                                  redirect('gegevens');
-                                                                              }}
-                                                                              active={
-                                                                                  currentSelectedContact.id ===
-                                                                                  occupation.primaryContact.id
-                                                                                      ? true
-                                                                                      : false
-                                                                              }
-                                                                          >
-                                                                              {occupation.primaryContact.fullName}
-                                                                          </Dropdown.Item>
-                                                                      ))
+                                                                    ? user.occupations.map(occupationContact =>
+                                                                          (occupationContact.primaryContact.typeId ===
+                                                                              'organisation' &&
+                                                                              occupationContact.primary) ||
+                                                                          (occupationContact.primaryContact.typeId ===
+                                                                              'person' &&
+                                                                              occupationContact.occupation
+                                                                                  .occupationForPortal) ? (
+                                                                              <Dropdown.Item
+                                                                                  key={occupationContact.id}
+                                                                                  onClick={() => {
+                                                                                      setCurrentContact(
+                                                                                          occupationContact.primaryContact
+                                                                                      );
+                                                                                      redirect('gegevens');
+                                                                                  }}
+                                                                                  active={
+                                                                                      currentSelectedContact.id ===
+                                                                                      occupationContact.primaryContact
+                                                                                          .id
+                                                                                          ? true
+                                                                                          : false
+                                                                                  }
+                                                                              >
+                                                                                  {
+                                                                                      occupationContact.primaryContact
+                                                                                          .fullName
+                                                                                  }
+                                                                              </Dropdown.Item>
+                                                                          ) : null
+                                                                      )
                                                                     : null}
                                                                 <Dropdown.Divider />
                                                                 <Dropdown.Item

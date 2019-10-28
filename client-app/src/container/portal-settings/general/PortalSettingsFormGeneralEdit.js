@@ -14,6 +14,7 @@ import InputText from '../../../components/form/InputText';
 import InputSelect from '../../../components/form/InputSelect';
 import EmailTemplateAPI from '../../../api/email-template/EmailTemplateAPI';
 import DocumentTemplateAPI from '../../../api/document-template/DocumentTemplateAPI';
+import ViewText from './PortalSettingsFormGeneralView';
 
 class PortalSettingsFormGeneralEdit extends Component {
     constructor(props) {
@@ -26,9 +27,11 @@ class PortalSettingsFormGeneralEdit extends Component {
             documentTemplates: [],
             emailTemplates: [],
             errors: {
+                portalWebsite: false,
                 portalUrl: false,
                 backgroundColor: false,
                 responsibleUserId: false,
+                checkContactTaskResponsibleUserId: false,
                 documentTemplateAgreementId: false,
                 emailTemplateAgreementId: false,
                 emailTemplateNewAccountId: false,
@@ -117,9 +120,11 @@ class PortalSettingsFormGeneralEdit extends Component {
 
     render() {
         const {
+            portalWebsite,
             portalUrl,
             backgroundColor,
             responsibleUserId,
+            checkContactTaskResponsibleUserId,
             documentTemplateAgreementId,
             emailTemplateAgreementId,
             emailTemplateNewAccountId,
@@ -132,6 +137,16 @@ class PortalSettingsFormGeneralEdit extends Component {
             <form className="form-horizontal" onSubmit={this.handleSubmit}>
                 <Panel>
                     <PanelBody>
+                        <div className="row">
+                            <InputText
+                                label="Cooperatie website"
+                                name={'portalWebsite'}
+                                value={portalWebsite}
+                                onChangeAction={this.handleInputChange}
+                                required={'required'}
+                                error={this.state.errors.portalWebsite}
+                            />
+                        </div>
                         <div className="row">
                             <InputText
                                 label="Portal URL"
@@ -189,6 +204,15 @@ class PortalSettingsFormGeneralEdit extends Component {
                                 value={responsibleUserId}
                                 onChangeAction={this.handleInputChange}
                                 error={this.state.errors.responsibleUserId}
+                            />
+                        </div>
+                        <div className="row">
+                            <InputText
+                                label="Verantwoordelijk gebruiker controle contact taak"
+                                name={'checkContactTaskResponsibleUserId'}
+                                value={checkContactTaskResponsibleUserId}
+                                onChangeAction={this.handleInputChange}
+                                error={this.state.errors.checkContactTaskResponsibleUserId}
                             />
                         </div>
                         <div className="row">

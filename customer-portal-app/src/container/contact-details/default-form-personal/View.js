@@ -50,6 +50,7 @@ function DefaultContactPersonalView({ portalSettings, initialContact }) {
                         {person.lastName}
                     </TextBlock>
                 </Row>
+                <FormLabel className={'field-label'}>Geboortedatum</FormLabel>
                 <Row>
                     <TextBlock className={'col-12 col-sm-6 col-md-4'} placeholder={'Geboortedatum'}>
                         {person.dateOfBirth ? moment(person.dateOfBirth).format('L') : ''}
@@ -108,7 +109,7 @@ function DefaultContactPersonalView({ portalSettings, initialContact }) {
                 </Row>
                 <Row>
                     <TextBlock className={'col-12 col-sm-8'} placeholder={'Land'}>
-                        {primaryAddress.countryId}
+                        {primaryAddress.country ? primaryAddress.country.name : ''}
                     </TextBlock>
                 </Row>
             </Col>
@@ -125,9 +126,9 @@ function DefaultContactPersonalView({ portalSettings, initialContact }) {
                     </TextBlock>
                 </Row>
 
-                <FormLabel className={'field-label'}>Akkoord privacy beleid</FormLabel>
+                <FormLabel className={'field-label'}>Akkoord privacybeleid</FormLabel>
                 <Row>
-                    <TextBlock className={'col-12 col-sm-8'}>
+                    <div className={'col-12 col-sm-8'}>
                         <input
                             type="checkbox"
                             id="did_agree_avg"
@@ -138,7 +139,7 @@ function DefaultContactPersonalView({ portalSettings, initialContact }) {
                         <span htmlFor="did_agree_avg" className="checkbox-label w-form-label">
                             Ik ga akkoord met{' '}
                             <a href={portalSettings['linkPrivacyPolicy']} target="_blank">
-                                privacy beleid
+                                privacybeleid
                             </a>{' '}
                             {didAgreeAvg ? (
                                 <em>({dateDidAgreeAvg ? ' ' + moment(dateDidAgreeAvg.date).format('L') : ''})</em>
@@ -146,7 +147,7 @@ function DefaultContactPersonalView({ portalSettings, initialContact }) {
                                 ''
                             )}
                         </span>
-                    </TextBlock>
+                    </div>
                 </Row>
 
                 <FormLabel className={'field-label'}>Energieleverancier</FormLabel>

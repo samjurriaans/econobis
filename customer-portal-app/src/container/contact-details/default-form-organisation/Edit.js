@@ -136,7 +136,7 @@ const DefaultContactOrganisationEdit = function({
                 </Row>
 
                 <FormLabel htmlFor="did_agree_avg" className={'field-label'}>
-                    Akkoord privacy beleid
+                    Akkoord privacybeleid
                 </FormLabel>
                 <Row>
                     <Col xs={12} sm={8}>
@@ -155,7 +155,7 @@ const DefaultContactOrganisationEdit = function({
                                     <span htmlFor="did_agree_avg" className="checkbox-label w-form-label">
                                         Ik ga akkoord met{' '}
                                         <a href={portalSettings['linkPrivacyPolicy']} target="_blank">
-                                            privacy beleid
+                                            privacybeleid
                                         </a>
                                     </span>{' '}
                                     {values.didAgreeAvg ? (
@@ -566,11 +566,11 @@ const DefaultContactOrganisationEdit = function({
                                     id="energy_supplier_id"
                                     placeholder={'Selecteer uw leverancier'}
                                     options={EnergySuppliers}
-                                    disabled={
-                                        initialContact.primaryContactEnergySupplier &&
-                                        initialContact.primaryContactEnergySupplier.energySupplierId &&
-                                        initialContact.isParticipant
-                                    }
+                                    // disabled={
+                                    //     initialContact.primaryContactEnergySupplier &&
+                                    //     initialContact.primaryContactEnergySupplier.energySupplierId &&
+                                    //     initialContact.isParticipant
+                                    // }
                                 />
                             )}
                         />
@@ -593,12 +593,12 @@ const DefaultContactOrganisationEdit = function({
                                             touched={touched}
                                             id="es_number"
                                             placeholder={'Klant nummer bij leverancier'}
-                                            disabled={
-                                                initialContact.primaryContactEnergySupplier &&
-                                                initialContact.primaryContactEnergySupplier.energySupplierId &&
-                                                initialContact.primaryContactEnergySupplier.esNumber &&
-                                                initialContact.isParticipant
-                                            }
+                                            // disabled={
+                                            //     initialContact.primaryContactEnergySupplier &&
+                                            //     initialContact.primaryContactEnergySupplier.energySupplierId &&
+                                            //     initialContact.primaryContactEnergySupplier.esNumber &&
+                                            //     initialContact.isParticipant
+                                            // }
                                         />
                                     )}
                                 />
@@ -620,11 +620,11 @@ const DefaultContactOrganisationEdit = function({
                                             onChangeAction={setFieldValue}
                                             id="member_since"
                                             placeholder={'Klant sinds'}
-                                            readOnly={
-                                                initialContact.primaryContactEnergySupplier &&
-                                                initialContact.primaryContactEnergySupplier.energySupplierId &&
-                                                initialContact.primaryContactEnergySupplier.memberSince
-                                            }
+                                            // readOnly={
+                                            //     initialContact.primaryContactEnergySupplier &&
+                                            //     initialContact.primaryContactEnergySupplier.energySupplierId &&
+                                            //     initialContact.primaryContactEnergySupplier.memberSince
+                                            // }
                                         />
                                     )}
                                 />
@@ -645,12 +645,12 @@ const DefaultContactOrganisationEdit = function({
                                             touched={touched}
                                             id="ean_electricity"
                                             placeholder={'EAN nummer electriciteit'}
-                                            disabled={
-                                                initialContact.primaryContactEnergySupplier &&
-                                                initialContact.primaryContactEnergySupplier.energySupplierId &&
-                                                initialContact.primaryContactEnergySupplier.eanElectricity &&
-                                                initialContact.isParticipant
-                                            }
+                                            // disabled={
+                                            //     initialContact.primaryContactEnergySupplier &&
+                                            //     initialContact.primaryContactEnergySupplier.energySupplierId &&
+                                            //     initialContact.primaryContactEnergySupplier.eanElectricity &&
+                                            //     initialContact.isParticipant
+                                            // }
                                         />
                                     )}
                                 />
@@ -671,11 +671,11 @@ const DefaultContactOrganisationEdit = function({
                                             touched={touched}
                                             id="ean_gas"
                                             placeholder={'EAN nummer electriciteit'}
-                                            disabled={
-                                                initialContact.primaryContactEnergySupplier &&
-                                                initialContact.primaryContactEnergySupplier.energySupplierId &&
-                                                initialContact.primaryContactEnergySupplier.eanGas
-                                            }
+                                            // disabled={
+                                            //     initialContact.primaryContactEnergySupplier &&
+                                            //     initialContact.primaryContactEnergySupplier.energySupplierId &&
+                                            //     initialContact.primaryContactEnergySupplier.eanGas
+                                            // }
                                         />
                                     )}
                                 />

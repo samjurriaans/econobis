@@ -5,9 +5,11 @@ import Panel from '../../../components/panel/Panel';
 import PanelBody from '../../../components/panel/PanelBody';
 
 const PortalSettingsFormGeneralView = ({
+    portalWebsite,
     portalUrl,
     backgroundColor,
     responsibleUserId,
+    checkContactTaskResponsibleUserId,
     documentTemplateAgreementId,
     emailTemplateAgreementId,
     emailTemplateNewAccountId,
@@ -20,6 +22,9 @@ const PortalSettingsFormGeneralView = ({
         <div onClick={switchToEdit}>
             <Panel>
                 <PanelBody>
+                    <div className="row">
+                        <ViewText label={'Cooperatie website'} value={portalWebsite} />
+                    </div>
                     <div className="row">
                         <ViewText label={'Portal Url'} value={portalUrl} />
                     </div>
@@ -37,6 +42,12 @@ const PortalSettingsFormGeneralView = ({
                     </div>
                     <div className="row">
                         <ViewText label={'Portal log gebruiker'} value={responsibleUserId} />
+                    </div>
+                    <div className="row">
+                        <ViewText
+                            label={'Verantwoordelijk gebruiker controle contact taak'}
+                            value={checkContactTaskResponsibleUserId}
+                        />
                     </div>
                     <div className="row">
                         <ViewText label={'Document template'} value={documentTemplateAgreementId} />
