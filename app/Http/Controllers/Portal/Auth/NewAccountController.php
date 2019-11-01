@@ -11,12 +11,14 @@ use App\Eco\Organisation\Organisation;
 use App\Eco\Person\Person;
 use App\Eco\Portal\PortalUser;
 use App\Eco\Title\Title;
+use App\Eco\User\User;
 use App\Helpers\Email\EmailHelper;
 use App\Helpers\Settings\PortalSettings;
 use App\Helpers\Template\TemplateVariableHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Portal\Templates\PortalMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -63,7 +65,10 @@ class NewAccountController extends Controller
                 abort(501, 'Er is helaas een fout opgetreden (6).');
             }
 
+            Auth::setUser(User::find($responsibleUserId));
+
             DB::transaction(function () use ($request, $responsibleUserId, $emailTemplateNewAccountId) {
+
 
                 $data = $this->getDataFromRequest($request);
                 $contact = $this->addContact($data['contact']);
@@ -144,7 +149,6 @@ class NewAccountController extends Controller
         $titleValidator = function ($titleId) {
             if ($titleId != '') {
                 $title = Title::find($titleId);
-//                if (!$title) $this->error('Ongeldige waarde in titel_id');
                 return $title->id;
             }
             return null;
@@ -189,10 +193,12 @@ class NewAccountController extends Controller
 
             return $contactPerson;
         }
+        $contactResponsibleOwnerUserId = PortalSettings::get('contactResponsibleOwnerUserId');
 
         $contact = Contact::create([
             'type_id' => ContactType::PERSON,
             'status_id' => 'none',
+            'owner_id' => $contactResponsibleOwnerUserId,
         ]);
 
         $lastName = $data['last_name'];
@@ -252,19 +258,17 @@ class NewAccountController extends Controller
         }
 
         $portalName = PortalSettings::get('portalName');
-        $portalWebsite = PortalSettings::get('portalWebsite');
-        $subject = str_replace('{contactpersoon}', $contact->full_name, $subject);
         $subject = str_replace('{portal_naam}', $portalName, $subject);
+        $subject = str_replace('{contactpersoon}', $contact->full_name, $subject);
         $htmlBody = str_replace('{contactpersoon}', $contact->full_name, $htmlBody);
-        $htmlBody = str_replace('{portal_naam}', $portalName, $htmlBody);
-        $htmlBody = str_replace('{portal_website}', $portalWebsite, $htmlBody);
 
 //        $user = Auth::user();
 //        $htmlBody = TemplateVariableHelper::replaceTemplateVariables($htmlBody,
 //            'ik', $user);
 
-        $htmlBody = TemplateVariableHelper::replaceTemplateVariables($htmlBody,
-            'contact', $contact);
+        $htmlBody = TemplateVariableHelper::replaceTemplateVariables($htmlBody,'contact', $contact);
+        $htmlBody = TemplateVariableHelper::replaceTemplatePortalVariables($htmlBody,'portal' );
+        $htmlBody = TemplateVariableHelper::replaceTemplateCooperativeVariables($htmlBody,'cooperatie' );
 
         $htmlBody = TemplateVariableHelper::stripRemainingVariableTags($htmlBody);
 

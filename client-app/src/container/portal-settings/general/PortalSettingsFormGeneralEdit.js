@@ -28,11 +28,14 @@ class PortalSettingsFormGeneralEdit extends Component {
             emailTemplates: [],
             errors: {
                 portalName: false,
+                cooperativeName: false,
                 portalWebsite: false,
                 portalUrl: false,
                 backgroundColor: false,
                 responsibleUserId: false,
                 checkContactTaskResponsibleUserId: false,
+                checkContactTaskResponsibleTeamId: false,
+                contactResponsibleOwnerUserId: false,
                 documentTemplateAgreementId: false,
                 emailTemplateAgreementId: false,
                 emailTemplateNewAccountId: false,
@@ -122,11 +125,14 @@ class PortalSettingsFormGeneralEdit extends Component {
     render() {
         const {
             portalName,
+            cooperativeName,
             portalWebsite,
             portalUrl,
             backgroundColor,
             responsibleUserId,
             checkContactTaskResponsibleUserId,
+            checkContactTaskResponsibleTeamId,
+            contactResponsibleOwnerUserId,
             documentTemplateAgreementId,
             emailTemplateAgreementId,
             emailTemplateNewAccountId,
@@ -141,12 +147,22 @@ class PortalSettingsFormGeneralEdit extends Component {
                     <PanelBody>
                         <div className="row">
                             <InputText
-                                label="Cooperatie naam"
+                                label="Mijn cooperatie naam"
                                 name={'portalName'}
                                 value={portalName}
                                 onChangeAction={this.handleInputChange}
                                 required={'required'}
                                 error={this.state.errors.portalName}
+                            />
+                        </div>
+                        <div className="row">
+                            <InputText
+                                label="Cooperatie naam"
+                                name={'cooperativeName'}
+                                value={cooperativeName}
+                                onChangeAction={this.handleInputChange}
+                                required={'required'}
+                                error={this.state.errors.cooperativeName}
                             />
                         </div>
                         <div className="row">
@@ -199,7 +215,6 @@ class PortalSettingsFormGeneralEdit extends Component {
                                 error={this.state.errors.linkUnderstandInfo}
                             />
                         </div>
-
                         <div className="row">
                             <InputText
                                 label="Achtergrondkleur"
@@ -220,11 +235,29 @@ class PortalSettingsFormGeneralEdit extends Component {
                         </div>
                         <div className="row">
                             <InputText
-                                label="Verantwoordelijk gebruiker controle contact taak"
+                                label="Verantwoordelijke gebruiker eigenaar contact"
+                                name={'contactResponsibleOwnerUserId'}
+                                value={contactResponsibleOwnerUserId}
+                                onChangeAction={this.handleInputChange}
+                                error={this.state.errors.contactResponsibleOwnerUserId}
+                            />
+                        </div>
+                        <div className="row">
+                            <InputText
+                                label="Verantwoordelijke gebruiker controle contact taak"
                                 name={'checkContactTaskResponsibleUserId'}
                                 value={checkContactTaskResponsibleUserId}
                                 onChangeAction={this.handleInputChange}
                                 error={this.state.errors.checkContactTaskResponsibleUserId}
+                            />
+                        </div>
+                        <div className="row">
+                            <InputText
+                                label="Verantwoordelijk team controle contact taak"
+                                name={'checkContactTaskResponsibleTeamId'}
+                                value={checkContactTaskResponsibleTeamId}
+                                onChangeAction={this.handleInputChange}
+                                error={this.state.errors.checkContactTaskResponsibleTeamId}
                             />
                         </div>
                         <div className="row">

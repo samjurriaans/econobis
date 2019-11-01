@@ -6,11 +6,14 @@ import PanelBody from '../../../components/panel/PanelBody';
 
 const PortalSettingsFormGeneralView = ({
     portalName,
+    cooperativeName,
     portalWebsite,
     portalUrl,
     backgroundColor,
     responsibleUserId,
     checkContactTaskResponsibleUserId,
+    checkContactTaskResponsibleTeamId,
+    contactResponsibleOwnerUserId,
     documentTemplateAgreementId,
     emailTemplateAgreementId,
     emailTemplateNewAccountId,
@@ -24,7 +27,10 @@ const PortalSettingsFormGeneralView = ({
             <Panel>
                 <PanelBody>
                     <div className="row">
-                        <ViewText label={'Cooperatie naam'} value={portalName} />
+                        <ViewText label={'Mijn cooperatie naam'} value={portalName} />
+                    </div>
+                    <div className="row">
+                        <ViewText label={'Cooperatie naam'} value={cooperativeName} />
                     </div>
                     <div className="row">
                         <ViewText label={'Cooperatie website'} value={portalWebsite} />
@@ -49,8 +55,20 @@ const PortalSettingsFormGeneralView = ({
                     </div>
                     <div className="row">
                         <ViewText
-                            label={'Verantwoordelijk gebruiker controle contact taak'}
+                            label={'Verantwoordelijke gebruiker eigenaar contact'}
+                            value={contactResponsibleOwnerUserId}
+                        />
+                    </div>
+                    <div className="row">
+                        <ViewText
+                            label={'Verantwoordelijke gebruiker controle contact taak'}
                             value={checkContactTaskResponsibleUserId}
+                        />
+                    </div>
+                    <div className="row">
+                        <ViewText
+                            label={'Verantwoordelijk team controle contact taak'}
+                            value={checkContactTaskResponsibleTeamId}
                         />
                     </div>
                     <div className="row">

@@ -74,11 +74,14 @@ class SettingController
     {
         return in_array($key, [
             'portalName',
+            'cooperativeName',
             'portalWebsite',
             'portalUrl',
             'backgroundColor',
             'responsibleUserId',
+            'contactResponsibleOwnerUserId',
             'checkContactTaskResponsibleUserId',
+            'checkContactTaskResponsibleTeamId',
             'documentTemplateAgreementId',
             'emailTemplateAgreementId',
             'emailTemplateNewAccountId',
