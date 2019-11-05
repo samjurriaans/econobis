@@ -116,10 +116,16 @@ class ContactController extends ApiController
 
     public function previewDocument(Contact $contact, Project $project, Request $request)
     {
-        $documentTemplateAgreementId = PortalSettings::get('documentTemplateAgreementId');
+        $documentTemplateAgreementId = $project ? $project->document_template_agreement_id : 0;
         $documentTemplate = DocumentTemplate::find($documentTemplateAgreementId);
 
-        return DocumentHelper::getDocumentBody($contact, $project, $documentTemplate);
+        if(!$documentTemplate)
+        {
+            $documentBody = '';
+        }else{
+            $documentBody = DocumentHelper::getDocumentBody($contact, $project, $documentTemplate, $request);
+        }
+        return $documentBody;
     }
 
     protected function updatePerson($contact, Request $request)

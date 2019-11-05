@@ -363,9 +363,21 @@ class Contact extends Model
 
     public function getIsParticipantAttribute()
     {
-        return( $this->participations() && $this->participations()->count() > 0 );
+        return( $this->participations && $this->participations->count() > 0 );
     }
-        /**
+
+    public function getIsParticipantPcrProjectAttribute()
+    {
+        foreach($this->participations as $participation)
+        {
+            if($participation->project && $participation->project->projectType->code_ref == 'postalcode_link_capital' ){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Scope voor filteren van contacten voor portal users.
      *
      * Een portal user mag alleen zijn eigen gegevens ophalen

@@ -6,9 +6,9 @@ import LoadingView from '../../components/general/LoadingView';
 import ContactDetailsPersonal from './Personal';
 import ContactDetailsOrganisation from './Organisation';
 import PortalSettingsAPI from '../../api/portal-settings/PortalSettingsAPI';
-import Button from "react-bootstrap/Button";
-import {Link} from "react-router-dom";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Button from 'react-bootstrap/Button';
+import { Link } from 'react-router-dom';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 const ContactDetails = function(props) {
     const [contact, setContact] = useState({});
@@ -18,7 +18,7 @@ const ContactDetails = function(props) {
 
     useEffect(() => {
         const keys =
-            '?keys[]=portalName&keys[]=portalWebsite&keys[]=portalUrl&keys[]=backgroundColor&keys[]=responsibleUserId&keys[]=checkContactTaskResponsibleUserId&keys[]=documentTemplateAgreementId&keys[]=emailTemplateAgreementId&keys[]=linkPrivacyPolicy&keys[]=linkAgreeTerms&keys[]=linkUnderstandInfo';
+            '?keys[]=portalName&keys[]=portalWebsite&keys[]=portalUrl&keys[]=backgroundColor&keys[]=responsibleUserId&keys[]=checkContactTaskResponsibleUserId&keys[]=linkPrivacyPolicy';
         PortalSettingsAPI.fetchPortalSettings(keys)
             .then(payload => {
                 setPortalSettings({ ...payload.data });
