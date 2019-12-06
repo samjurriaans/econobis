@@ -241,7 +241,7 @@ class ParticipationProjectController extends Controller
                 $payoutTypeId = ParticipantProjectPayoutType::where('code_ref', 'account')->value('id');
                 break;
         }
-        $powerKwhConsumption = ($request->powerKwhConsumption && $request->powerKwhConsumption!= '') ? $request->powerKwhConsumption : 0;
+        $powerKwhConsumption = ($request->pcrYearlyPowerKwhConsumption && $request->pcrYearlyPowerKwhConsumption!= '') ? $request->pcrYearlyPowerKwhConsumption : 0;
         $participation = ParticipantProject::create([
             'contact_id' => $contact->id,
             'project_id' => $project->id,
