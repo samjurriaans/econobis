@@ -16,6 +16,19 @@ export default function(state = {}, action) {
                 ...state,
                 ...action.contactDetails,
             };
+        case 'UPDATE_PORTAL_USER':
+            return {
+                ...state,
+                portalUser: {
+                    ...state.portalUser,
+                    ...action.portalUser,
+                },
+            };
+        case 'DELETE_PORTAL_USER_SUCCESS':
+            return {
+                ...state,
+                portalUser: null,
+            };
         case 'NEW_ADDRESS':
             return {
                 ...state,

@@ -11,8 +11,8 @@ const ContactDetailsFormOrganisationView = props => {
         iban,
         ibanAttn,
         createdAt,
-        newsletter,
         didAgreeAvg,
+        dateDidAgreeAvg,
         isCollectMandate,
         collectMandateCode,
         collectMandateSignatureDate,
@@ -60,14 +60,18 @@ const ContactDetailsFormOrganisationView = props => {
 
             <div className="row">
                 <ViewText
-                    className={'col-xs-12 field-to-be-removed'}
-                    label="Nieuwsbrief"
-                    value={newsletter ? 'Ja' : 'Nee'}
+                    label={'Akkoord privacybeleid'}
+                    className={'col-xs-12'}
+                    value={
+                        didAgreeAvg ? (
+                            <span>
+                                Ja <em>({dateDidAgreeAvg ? moment(dateDidAgreeAvg.date).format('L') : ''})</em>
+                            </span>
+                        ) : (
+                            'Nee'
+                        )
+                    }
                 />
-            </div>
-
-            <div className="row">
-                <ViewText className={'col-xs-12'} label="Akkoord privacybeleid" value={didAgreeAvg ? 'Ja' : 'Nee'} />
             </div>
 
             <div className="row">

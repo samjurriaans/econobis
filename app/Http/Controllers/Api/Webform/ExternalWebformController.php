@@ -201,6 +201,7 @@ class ExternalWebformController extends Controller
                 'iban' => 'iban',
                 'iban_tnv' => 'iban_attn',
                 'akkoord_privacybeleid' => 'did_agree_avg',
+                'datum_akkoord_privacybeleid' => 'date_did_agree_avg',
                 'incasso_machtiging' => 'is_collect_mandate',
                 'incasso_machtigingskenmerk' => 'collect_mandate_code',
                 'incasso_ondertekening_datum' => 'collect_mandate_signature_date',
@@ -227,6 +228,9 @@ class ExternalWebformController extends Controller
                 'deelname_jaarlijks_verbruik' => 'power_kwh_consumption',
                 'deelname_uitkeren_op_id' => 'payout_type_id',
                 'deelname_akkoord_regelement' => 'did_accept_agreement',
+                'deelname_datum_akkoord_regelement' => 'date_did_accept_agreement',
+                'deelname_projectinformatie_begrepen' => 'did_understand_info',
+                'deelname_datum_projectinformatie_begrepen' => 'date_did_understand_info',
                 // ParticipantMutation
                 'deelname_mutatie_status_id' => 'participation_mutation_status_id',
                 'deelname_mutatie_aantal' => 'participation_mutation_quantity',
@@ -528,11 +532,12 @@ class ExternalWebformController extends Controller
                 'iban' => $iban,
                 'iban_attn' => $data['iban_attn'],
                 'did_agree_avg' => (bool)$data['did_agree_avg'],
+                'date_did_agree_avg' => $data['date_did_agree_avg'] ? Carbon::make($data['date_did_agree_avg']): null,
                 'is_collect_mandate' => (bool)$data['is_collect_mandate'],
-                'collect_mandate_code' => (bool)$data['is_collect_mandate'] ? $data['collect_mandate_code'] : '',
-                'collect_mandate_signature_date' => (bool)$data['is_collect_mandate'] ? Carbon::make($data['collect_mandate_signature_date']): null,
-                'collect_mandate_first_run_date' => (bool)$data['is_collect_mandate'] ? Carbon::make($data['collect_mandate_first_run_date']): null,
-                'collect_mandate_collection_schema' => (bool)$data['is_collect_mandate'] ? 'core' : '',
+                'collect_mandate_code' => $data['is_collect_mandate'] ? $data['collect_mandate_code'] : '',
+                'collect_mandate_signature_date' => $data['is_collect_mandate'] ? Carbon::make($data['collect_mandate_signature_date']): null,
+                'collect_mandate_first_run_date' => $data['is_collect_mandate'] ? Carbon::make($data['collect_mandate_first_run_date']): null,
+                'collect_mandate_collection_schema' => $data['is_collect_mandate'] ? 'core' : '',
             ]);
 
             $organisation = Organisation::create([
@@ -590,11 +595,12 @@ class ExternalWebformController extends Controller
             'iban' => $iban,
             'iban_attn' => $data['iban_attn'],
             'did_agree_avg' => (bool)$data['did_agree_avg'],
+            'date_did_agree_avg' => $data['date_did_agree_avg'] ? Carbon::make($data['date_did_agree_avg']): null,
             'is_collect_mandate' => (bool)$data['is_collect_mandate'],
-            'collect_mandate_code' => (bool)$data['is_collect_mandate'] ? $data['collect_mandate_code'] : '',
-            'collect_mandate_signature_date' => (bool)$data['is_collect_mandate'] ? Carbon::make($data['collect_mandate_signature_date']): null,
-            'collect_mandate_first_run_date' => (bool)$data['is_collect_mandate'] ? Carbon::make($data['collect_mandate_first_run_date']): null,
-            'collect_mandate_collection_schema' => (bool)$data['is_collect_mandate'] ? 'core' : '',
+            'collect_mandate_code' => $data['is_collect_mandate'] ? $data['collect_mandate_code'] : '',
+            'collect_mandate_signature_date' => $data['is_collect_mandate'] ? Carbon::make($data['collect_mandate_signature_date']): null,
+            'collect_mandate_first_run_date' => $data['is_collect_mandate'] ? Carbon::make($data['collect_mandate_first_run_date']): null,
+            'collect_mandate_collection_schema' => $data['is_collect_mandate'] ? 'core' : '',
         ]);
 
         $lastName = $data['last_name'];
@@ -741,6 +747,9 @@ class ExternalWebformController extends Controller
                 'power_kwh_consumption' => $data['power_kwh_consumption'] == '' ? 0 : $data['power_kwh_consumption'],
                 'type_id' => $payoutTypeId,
                 'did_accept_agreement' => (bool)$data['did_accept_agreement'],
+                'date_did_accept_agreement' => Carbon::make($data['date_did_accept_agreement']),
+                'did_understand_info' => (bool)$data['did_understand_info'],
+                'date_did_understand_info' => Carbon::make($data['date_did_understand_info']),
             ]);
 
             $this->log('Participatie aangemaakt met id ' . $participation->id . '.');

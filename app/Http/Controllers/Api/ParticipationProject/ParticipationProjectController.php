@@ -25,6 +25,7 @@ use App\Eco\Project\ProjectValueCourse;
 use App\Helpers\Alfresco\AlfrescoHelper;
 use App\Helpers\Excel\ParticipantExcelHelper;
 use App\Helpers\Excel\ParticipantExcelHelperHelper;
+use App\Helpers\Settings\PortalSettings;
 use App\Helpers\Template\TemplateTableHelper;
 use App\Http\Resources\Contact\ContactPeek;
 use App\Http\Resources\ContactGroup\FullContactGroup;
@@ -284,6 +285,9 @@ class ParticipationProjectController extends ApiController
 
         $data = $requestInput
             ->boolean('didAcceptAgreement')->alias('did_accept_agreement')->next()
+            ->date('dateDidAcceptAgreement')->validate('date')->alias('date_did_accept_agreement')->next()
+            ->boolean('didUnderstandInfo')->alias('did_understand_info')->next()
+            ->date('dateDidUnderstandInfo')->validate('date')->alias('date_did_understand_info')->next()
             ->integer('giftedByContactId')->validate('nullable|exists:contacts,id')->onEmpty(null)->alias('gifted_by_contact_id')->next()
             ->string('ibanPayout')->alias('iban_payout')->next()
             ->integer('legalRepContactId')->validate('nullable|exists:contacts,id')->onEmpty(null)->alias('legal_rep_contact_id')->next()
@@ -525,6 +529,10 @@ class ParticipationProjectController extends ApiController
     public function createParticipantReport(Request $request, DocumentTemplate $documentTemplate, EmailTemplate $emailTemplate, $previewEmail = false, $previewPDF = false){
         $participantIds = $request->input('participantIds');
         $subject = $request->input('subject');
+        $portalName = PortalSettings::get('portalName');
+        $cooperativeName = PortalSettings::get('cooperativeName');
+        $subject = str_replace('{cooperatie_portal_naam}', $portalName, $subject);
+        $subject = str_replace('{cooperatie_naam}', $cooperativeName, $subject);
 
         //get current logged in user
         $user = Auth::user();
@@ -560,6 +568,9 @@ class ParticipationProjectController extends ApiController
                 $revenueHtml = TemplateVariableHelper::replaceTemplateVariables($revenueHtml,'deelname', $participant);
                 $revenueHtml = TemplateVariableHelper::replaceTemplateVariables($revenueHtml,'mutaties', $participant->mutations);
                 $revenueHtml = TemplateVariableHelper::replaceTemplateVariables($revenueHtml,'ik', $user);
+                $revenueHtml = TemplateVariableHelper::replaceTemplatePortalVariables($revenueHtml,'portal' );
+                $revenueHtml = TemplateVariableHelper::replaceTemplatePortalVariables($revenueHtml,'contacten_portal' );
+                $revenueHtml = TemplateVariableHelper::replaceTemplateCooperativeVariables($revenueHtml,'cooperatie' );
                 $revenueHtml = TemplateVariableHelper::replaceTemplateVariables($revenueHtml,'administratie', $project->administration);
 
                 $revenueHtml = TemplateVariableHelper::stripRemainingVariableTags($revenueHtml);
@@ -577,8 +588,11 @@ class ParticipationProjectController extends ApiController
 
                 $document = new Document();
                 $document->document_type = 'internal';
-                $document->document_group = 'revenue';
+                $document->document_group = $documentTemplate->document_group;
                 $document->contact_id = $contact->id;
+                $document->project_id = $project->id;
+                $document->participation_project_id = $participant->id;
+                $document->template_id = $documentTemplate->id;
 
                 $filename = str_replace(' ', '', $this->translateToValidCharacterSet($project->code)) . '_' . str_replace(' ', '', $this->translateToValidCharacterSet($contact->full_name));
 
@@ -618,6 +632,9 @@ class ParticipationProjectController extends ApiController
 
                 $htmlBodyWithContactVariables = TemplateTableHelper::replaceTemplateTables($email->html_body, $contact);
                 $htmlBodyWithContactVariables = TemplateVariableHelper::replaceTemplateVariables($htmlBodyWithContactVariables, 'contact' ,$contact);
+                $htmlBodyWithContactVariables = TemplateVariableHelper::replaceTemplatePortalVariables($htmlBodyWithContactVariables,'portal' );
+                $htmlBodyWithContactVariables = TemplateVariableHelper::replaceTemplatePortalVariables($htmlBodyWithContactVariables,'contacten_portal' );
+                $htmlBodyWithContactVariables = TemplateVariableHelper::replaceTemplateCooperativeVariables($htmlBodyWithContactVariables,'cooperatie' );
                 $htmlBodyWithContactVariables = TemplateVariableHelper::replaceTemplateVariables($htmlBodyWithContactVariables, 'ik', $user);
                 $htmlBodyWithContactVariables = TemplateVariableHelper::replaceTemplateVariables($htmlBodyWithContactVariables,'project', $project);
                 $htmlBodyWithContactVariables = TemplateVariableHelper::replaceTemplateVariables($htmlBodyWithContactVariables,'deelname', $participant);

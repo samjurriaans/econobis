@@ -10,6 +10,7 @@ namespace App\Helpers\Template;
 
 
 use App\Eco\Document\Document;
+use App\Helpers\Settings\PortalSettings;
 use App\Eco\ParticipantMutation\ParticipantMutationStatus;
 use App\Eco\ParticipantMutation\ParticipantMutationType;
 use App\Eco\Project\ProjectValueCourse;
@@ -299,6 +300,15 @@ class TemplateVariableHelper
             case 'iban_tnv':
                 return $model->iban_attn;
                 break;
+            case 'portal_registratie_link':
+                if($model->portal_registration_code)
+                {
+                    $link = 'https://' . PortalSettings::get("portalUrl") . '/#/activeer-registratie/' . $model->portal_registration_code . '/' . optional($model->primaryEmailAddress)->email;
+                }else{
+                    $link = '';
+                }
+                return $link;
+                break;
 
             default:
                 return '';
@@ -480,13 +490,15 @@ class TemplateVariableHelper
             case 'ean_levering':
                 return $model->ean_supply;
                 break;
+            case 'nominale_waarde':
             case 'participatie_waarde':
-                return $model->participation_worth;
+                return number_format($model->participation_worth, 2, ',', '');
                 break;
             case 'opgesteld_vermogen':
                 return $model->power_kw_available;
                 break;
             case 'total_participations':
+            case 'totaal_aantal_participaties_nodig':
                 return $model->total_participations;
                 break;
             case 'max_participaties':
@@ -1298,6 +1310,63 @@ class TemplateVariableHelper
         }
     }
 
+    static public function replaceTemplatePortalVariables($html_body, $var_prefix){
+        $regex = "/{" . $var_prefix . "_(\S*?)}/";
+        if (preg_match_all($regex, $html_body, $m)) {
+            foreach ($m[1] as $i => $var_name) {
+                $html_body = str_replace($m[0][$i], TemplateVariableHelper::getPortalVar($var_name), $html_body);
+            }
+        }
+        return $html_body;
+    }
+
+    public static function getPortalVar($varname){
+        $portalUrl = PortalSettings::get('portalUrl');
+        $portalName = PortalSettings::get('portalName');
+
+        switch ($varname) {
+            case 'url':
+                return $portalUrl;
+                break;
+            case 'naam':
+                return $portalName;
+                break;
+            default:
+                return '';
+                break;
+        }
+    }
+
+    static public function replaceTemplateCooperativeVariables($html_body, $var_prefix){
+        $regex = "/{" . $var_prefix . "_(\S*?)}/";
+        if (preg_match_all($regex, $html_body, $m)) {
+            foreach ($m[1] as $i => $var_name) {
+                $html_body = str_replace($m[0][$i], TemplateVariableHelper::getCooperativeVar($var_name), $html_body);
+            }
+        }
+        return $html_body;
+    }
+
+    public static function getCooperativeVar($varname){
+        $cooperativePortalName = PortalSettings::get('portalName');
+        $cooperativeName = PortalSettings::get('cooperativeName');
+        $cooperativeWebsite = PortalSettings::get('portalWebsite');
+
+        switch ($varname) {
+            case 'portal_naam':
+                return $cooperativePortalName;
+                break;
+            case 'naam':
+                return $cooperativeName;
+                break;
+            case 'website':
+                return $cooperativeWebsite;
+                break;
+            default:
+                return '';
+                break;
+        }
+    }
     static public function replaceTemplateTagVariable($base_html, $template_html, $free_text_1, $free_text_2){
 
         $template_html = TemplateVariableHelper::replaceTemplateFreeTextVariables($template_html, $free_text_1, $free_text_2);

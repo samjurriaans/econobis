@@ -13,12 +13,13 @@ import ButtonText from '../../../../components/button/ButtonText';
 import PanelFooter from '../../../../components/panel/PanelFooter';
 import InputToggle from '../../../../components/form/InputToggle';
 import ErrorModal from '../../../../components/modal/ErrorModal';
+import ViewText from '../../../../components/form/ViewText';
 
 class ContactDetailsFormPersonalEdit extends Component {
     constructor(props) {
         super(props);
 
-        const { number, createdAt, person, newsletter, didAgreeAvg } = props.contactDetails;
+        const { number, createdAt, person, didAgreeAvg, dateDidAgreeAvg } = props.contactDetails;
 
         this.state = {
             lastNamePrefixes: props.lastNamePrefixes,
@@ -39,8 +40,8 @@ class ContactDetailsFormPersonalEdit extends Component {
                 lastNamePrefix: person.lastNamePrefix ? person.lastNamePrefix : '',
                 lastName: person.lastName,
                 dateOfBirth: person.dateOfBirth ? moment(person.dateOfBirth.date).format('Y-MM-DD') : '',
-                newsletter: newsletter,
                 didAgreeAvg: didAgreeAvg,
+                dateDidAgreeAvg: dateDidAgreeAvg ? moment(dateDidAgreeAvg.date).format('Y-MM-DD') : '',
             },
             errors: {
                 name: false,
@@ -155,8 +156,8 @@ class ContactDetailsFormPersonalEdit extends Component {
             lastNamePrefixId,
             lastName,
             dateOfBirth,
-            newsletter,
             didAgreeAvg,
+            dateDidAgreeAvg,
             lastNamePrefix,
         } = this.state.person;
 
@@ -252,24 +253,37 @@ class ContactDetailsFormPersonalEdit extends Component {
                     </div>
 
                     <div className="row">
-                        <InputToggle
-                            label={'Nieuwsbrief'}
-                            divSize={'col-xs-12'}
-                            className={'field-to-be-removed'}
-                            name={'newsletter'}
-                            value={newsletter}
-                            onChangeAction={this.handleInputChange}
-                        />
-                    </div>
-
-                    <div className="row">
-                        <InputToggle
-                            label="Akkoord privacybeleid"
-                            divSize={'col-xs-12'}
-                            name="didAgreeAvg"
-                            value={didAgreeAvg}
-                            onChangeAction={this.handleInputChange}
-                        />
+                        {!didAgreeAvg ? (
+                            <InputToggle
+                                label="Akkoord privacybeleid"
+                                divSize={'col-xs-12'}
+                                name="didAgreeAvg"
+                                value={didAgreeAvg}
+                                onChangeAction={this.handleInputChange}
+                            />
+                        ) : (
+                            <ViewText
+                                label="Akkoord privacybeleid"
+                                id={'didAgreeAvg'}
+                                className={'form-group col-md-12'}
+                                value={
+                                    didAgreeAvg ? (
+                                        <span>
+                                            Ja{' '}
+                                            <em>
+                                                (
+                                                {dateDidAgreeAvg
+                                                    ? moment(dateDidAgreeAvg).format('L')
+                                                    : moment().format('L')}
+                                                )
+                                            </em>
+                                        </span>
+                                    ) : (
+                                        'Nee'
+                                    )
+                                }
+                            />
+                        )}
                     </div>
 
                     <PanelFooter>

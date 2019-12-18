@@ -6,13 +6,13 @@ import validator from 'validator';
 import { updateOrganisation } from '../../../../actions/contact/ContactDetailsActions';
 import OrganisationAPI from '../../../../api/contact/OrganisationAPI';
 import InputText from '../../../../components/form/InputText';
-import InputSelect from '../../../../components/form/InputSelect';
 import InputDate from '../../../../components/form/InputDate';
 import ButtonText from '../../../../components/button/ButtonText';
 import PanelFooter from '../../../../components/panel/PanelFooter';
 import * as ibantools from 'ibantools';
 import InputToggle from '../../../../components/form/InputToggle';
 import ErrorModal from '../../../../components/modal/ErrorModal';
+import ViewText from '../../../../components/form/ViewText';
 
 class ContactDetailsFormOrganisationEdit extends Component {
     constructor(props) {
@@ -24,8 +24,8 @@ class ContactDetailsFormOrganisationEdit extends Component {
             iban,
             ibanAttn,
             createdAt,
-            newsletter,
             didAgreeAvg,
+            dateDidAgreeAvg,
             isCollectMandate,
             collectMandateCode,
             collectMandateSignatureDate,
@@ -45,8 +45,8 @@ class ContactDetailsFormOrganisationEdit extends Component {
                 website: organisation.website,
                 iban: iban,
                 ibanAttn: ibanAttn ? ibanAttn : '',
-                newsletter: newsletter,
                 didAgreeAvg: didAgreeAvg,
+                dateDidAgreeAvg: dateDidAgreeAvg ? moment(dateDidAgreeAvg.date).format('Y-MM-DD') : '',
                 isCollectMandate,
                 collectMandateCode: collectMandateCode ? collectMandateCode : '',
                 collectMandateSignatureDate: collectMandateSignatureDate
@@ -172,8 +172,8 @@ class ContactDetailsFormOrganisationEdit extends Component {
             chamberOfCommerceNumber,
             vatNumber,
             createdAt,
-            newsletter,
             didAgreeAvg,
+            dateDidAgreeAvg,
             website,
             iban,
             ibanAttn,
@@ -272,24 +272,37 @@ class ContactDetailsFormOrganisationEdit extends Component {
                     </div>
 
                     <div className="row">
-                        <InputToggle
-                            className={'field-to-be-removed'}
-                            label={'Nieuwsbrief'}
-                            divSize={'col-xs-12'}
-                            name={'newsletter'}
-                            value={newsletter}
-                            onChangeAction={this.handleInputChange}
-                        />
-                    </div>
-
-                    <div className="row">
-                        <InputToggle
-                            label="Akkoord privacybeleid"
-                            divSize={'col-xs-12'}
-                            name="didAgreeAvg"
-                            value={didAgreeAvg}
-                            onChangeAction={this.handleInputChange}
-                        />
+                        {!didAgreeAvg ? (
+                            <InputToggle
+                                label="Akkoord privacybeleid"
+                                divSize={'col-xs-12'}
+                                name="didAgreeAvg"
+                                value={didAgreeAvg}
+                                onChangeAction={this.handleInputChange}
+                            />
+                        ) : (
+                            <ViewText
+                                label="Akkoord privacybeleid"
+                                id={'didAgreeAvg'}
+                                className={'form-group col-md-12'}
+                                value={
+                                    didAgreeAvg ? (
+                                        <span>
+                                            Ja{' '}
+                                            <em>
+                                                (
+                                                {dateDidAgreeAvg
+                                                    ? moment(dateDidAgreeAvg).format('L')
+                                                    : moment().format('L')}
+                                                )
+                                            </em>
+                                        </span>
+                                    ) : (
+                                        'Nee'
+                                    )
+                                }
+                            />
+                        )}
                     </div>
 
                     <div className="row">

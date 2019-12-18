@@ -28,6 +28,9 @@ class ParticipantFormEdit extends Component {
         const {
             id,
             didAcceptAgreement,
+            dateDidAcceptAgreement,
+            didUnderstandInfo,
+            dateDidUnderstandInfo,
             giftedByContactId,
             ibanPayout,
             legalRepContactId,
@@ -41,6 +44,9 @@ class ParticipantFormEdit extends Component {
             participation: {
                 id,
                 didAcceptAgreement: Boolean(didAcceptAgreement),
+                dateDidAcceptAgreement: dateDidAcceptAgreement ? dateDidAcceptAgreement : '',
+                didUnderstandInfo: Boolean(didUnderstandInfo),
+                dateDidUnderstandInfo: dateDidUnderstandInfo ? dateDidUnderstandInfo : '',
                 giftedByContactId: giftedByContactId ? giftedByContactId : '',
                 ibanPayout: ibanPayout ? ibanPayout : '',
                 legalRepContactId: legalRepContactId ? legalRepContactId : '',
@@ -133,6 +139,9 @@ class ParticipantFormEdit extends Component {
     render() {
         const {
             didAcceptAgreement,
+            dateDidAcceptAgreement,
+            didUnderstandInfo,
+            dateDidUnderstandInfo,
             giftedByContactId,
             ibanPayout,
             ibanPayoutAttn,
@@ -184,14 +193,70 @@ class ParticipantFormEdit extends Component {
                     />
                 </div>
                 <div className="row">
-                    <InputToggle
-                        label={'Akkoord reglement'}
-                        name={'didAcceptAgreement'}
-                        id={'didAcceptAgreement'}
-                        value={didAcceptAgreement}
-                        onChangeAction={this.handleInputChange}
-                    />
+                    {!didAcceptAgreement ? (
+                        <InputToggle
+                            label={'Akkoord voorwaarden'}
+                            name={'didAcceptAgreement'}
+                            id={'didAcceptAgreement'}
+                            value={didAcceptAgreement}
+                            onChangeAction={this.handleInputChange}
+                        />
+                    ) : (
+                        <ViewText
+                            label={'Akkoord voorwaarden'}
+                            id={'didAcceptAgreement'}
+                            className={'form-group col-md-6'}
+                            value={
+                                didAcceptAgreement ? (
+                                    <span>
+                                        Ja{' '}
+                                        <em>
+                                            (
+                                            {dateDidAcceptAgreement
+                                                ? moment(dateDidAcceptAgreement.date).format('L')
+                                                : ''}
+                                            )
+                                        </em>
+                                    </span>
+                                ) : (
+                                    'Nee'
+                                )
+                            }
+                        />
+                    )}
+                    {!didUnderstandInfo ? (
+                        <InputToggle
+                            label={'Projectinfo begrepen'}
+                            name={'didUnderstandInfo'}
+                            id={'didUnderstandInfo'}
+                            value={didUnderstandInfo}
+                            onChangeAction={this.handleInputChange}
+                        />
+                    ) : (
+                        <ViewText
+                            label={'Projectinfo begrepen'}
+                            id={'didUnderstandInfo'}
+                            className={'form-group col-md-6'}
+                            value={
+                                didUnderstandInfo ? (
+                                    <span>
+                                        Ja{' '}
+                                        <em>
+                                            (
+                                            {dateDidUnderstandInfo
+                                                ? moment(dateDidUnderstandInfo.date).format('L')
+                                                : ''}
+                                            )
+                                        </em>
+                                    </span>
+                                ) : (
+                                    'Nee'
+                                )
+                            }
+                        />
+                    )}
                 </div>
+
                 <div className="row">
                     <InputSelect
                         label={'Schenker'}
