@@ -739,6 +739,9 @@ class ProjectRevenueController extends ApiController
 
                     $revenueHtml
                         = TemplateVariableHelper::replaceTemplateVariables($revenueHtml, 'contact', $contact);
+                    $revenueHtml = TemplateVariableHelper::replaceTemplatePortalVariables($revenueHtml,'portal' );
+                    $revenueHtml = TemplateVariableHelper::replaceTemplatePortalVariables($revenueHtml,'contacten_portal' );
+                    $revenueHtml = TemplateVariableHelper::replaceTemplateCooperativeVariables($revenueHtml,'cooperatie' );
 
                     //wettelijk vertegenwoordiger
                     if (OccupationContact::where('contact_id', $contact->id)->where('occupation_id', 7)->exists()) {
@@ -778,6 +781,9 @@ class ProjectRevenueController extends ApiController
                     $document->document_type = 'internal';
                     $document->document_group = 'revenue';
                     $document->contact_id = $contact->id;
+                    $document->project_id = $project->id;
+                    $document->participation_project_id = $distribution->participation_id;
+                    $document->template_id = $documentTemplate->id;
 
                     $filename = str_replace(' ', '', $this->translateToValidCharacterSet($project->code)) . '_'
                         . str_replace(' ', '', $this->translateToValidCharacterSet($contact->full_name));

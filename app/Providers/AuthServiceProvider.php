@@ -8,14 +8,24 @@ use App\Eco\AuditTrail\AuditTrail;
 use App\Eco\AuditTrail\AuditTrailPolicy;
 use App\Eco\Campaign\Campaign;
 use App\Eco\Campaign\CampaignPolicy;
+use App\Eco\Contact\Contact;
+use App\Eco\Contact\ContactPolicy;
+use App\Eco\ContactGroup\ContactGroup;
+use App\Eco\ContactGroup\ContactGroupPolicy;
+use App\Eco\ContactNote\ContactNote;
+use App\Eco\ContactNote\ContactNotePolicy;
 use App\Eco\CostCenter\CostCenter;
 use App\Eco\CostCenter\CostCenterPolicy;
 use App\Eco\Document\Document;
 use App\Eco\Document\DocumentPolicy;
 use App\Eco\DocumentTemplate\DocumentTemplate;
 use App\Eco\DocumentTemplate\DocumentTemplatePolicy;
+use App\Eco\EmailAddress\EmailAddress;
+use App\Eco\EmailAddress\EmailAddressPolicy;
 use App\Eco\HousingFile\HousingFile;
 use App\Eco\HousingFile\HousingFilePolicy;
+use App\Eco\Intake\Intake;
+use App\Eco\Intake\IntakePolicy;
 use App\Eco\Invoice\Invoice;
 use App\Eco\Invoice\InvoicePolicy;
 use App\Eco\Ledger\Ledger;
@@ -26,8 +36,8 @@ use App\Eco\Mailbox\MailgunDomain;
 use App\Eco\Mailbox\MailgunDomainPolicy;
 use App\Eco\Measure\Measure;
 use App\Eco\Measure\MeasurePolicy;
-use App\Eco\Opportunity\OpportunityPolicy;
 use App\Eco\Opportunity\Opportunity;
+use App\Eco\Opportunity\OpportunityPolicy;
 use App\Eco\Opportunity\OpportunityStatus;
 use App\Eco\Opportunity\OpportunityStatusPolicy;
 use App\Eco\Order\Order;
@@ -36,12 +46,6 @@ use App\Eco\Organisation\Organisation;
 use App\Eco\Organisation\OrganisationPolicy;
 use App\Eco\Address\Address;
 use App\Eco\Address\AddressPolicy;
-use App\Eco\Contact\Contact;
-use App\Eco\Contact\ContactPolicy;
-use App\Eco\ContactNote\ContactNote;
-use App\Eco\ContactNote\ContactNotePolicy;
-use App\Eco\EmailAddress\EmailAddress;
-use App\Eco\EmailAddress\EmailAddressPolicy;
 use App\Eco\ParticipantMutation\ParticipantMutation;
 use App\Eco\ParticipantMutation\ParticipantMutationPolicy;
 use App\Eco\ParticipantProject\ObligationNumber;
@@ -52,8 +56,8 @@ use App\Eco\Person\Person;
 use App\Eco\Person\PersonPolicy;
 use App\Eco\PhoneNumber\PhoneNumber;
 use App\Eco\PhoneNumber\PhoneNumberPolicy;
-use App\Eco\Intake\Intake;
-use App\Eco\Intake\IntakePolicy;
+use App\Eco\Portal\PortalUser;
+use App\Eco\Portal\PortalUserPolicy;
 use App\Eco\Product\Product;
 use App\Eco\Product\ProductPolicy;
 use App\Eco\Project\Project;
@@ -74,14 +78,13 @@ use App\Eco\Team\Team;
 use App\Eco\Team\TeamPolicy;
 use App\Eco\User\User;
 use App\Eco\User\UserPolicy;
-use App\Eco\ContactGroup\ContactGroup;
-use App\Eco\ContactGroup\ContactGroupPolicy;
 use App\Eco\VatCode\VatCode;
 use App\Eco\VatCode\VatCodePolicy;
 use App\Eco\Webform\Webform;
 use App\Eco\Webform\WebformPolicy;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Auth\RequestGuard;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
@@ -96,6 +99,7 @@ class AuthServiceProvider extends ServiceProvider
         Address::class => AddressPolicy::class,
         Contact::class => ContactPolicy::class,
         ContactNote::class => ContactNotePolicy::class,
+        PortalUser::class => PortalUserPolicy::class,
         EmailAddress::class => EmailAddressPolicy::class,
         Person::class => PersonPolicy::class,
         PhoneNumber::class => PhoneNumberPolicy::class,
@@ -145,6 +149,67 @@ class AuthServiceProvider extends ServiceProvider
         Passport::tokensExpireIn(now()->addHours(12));
         Passport::refreshTokensExpireIn(now()->addHours(12));
 
-        Passport::routes();
+        /**
+         * Scopes registreren voor verschillende tokens voor
+         * gebruik van app of portal.
+         */
+        Passport::tokensCan([
+            'use-app' => 'Use Econobis app',
+            'use-portal' => 'Use Econobis portal',
+        ]);
+
+        /**
+         * Standaard Passport routes registreren
+         *
+         * De tokens die via deze routes worden aangemaakt krijgen de 'use-app' scope.
+         * Op deze manier zijn tokens van de hoofdapplicatie te onderscheiden van
+         * tokens van het gebruikers portal en kunnen tokens van de gebruikers
+         * portal niet worden gebruikt om in Econobis zelf in te loggen.
+         */
+        Passport::routes(null, [
+            'middleware' => [function ($request, $next) {
+                $request->merge(['scope' => 'use-app']);
+                return $next($request);
+            }],
+        ]);
+
+
+        /**
+         * Portal Passport routes registreren
+         *
+         * De tokens die via deze routes worden aangemaakt krijgen de 'use-portal' scope.
+         * Op deze manier zijn tokens van de hoofdapplicatie te onderscheiden van
+         * tokens van het gebruikers portal en kunnen tokens van de gebruikers
+         * portal niet worden gebruikt om in Econobis zelf in te loggen.
+         *
+         * Tevens de passport-portal middleware toepassen om te zorgen dat de tabel
+         * met portalgebruikers wordt gebruikt door passport ipv de standaard
+         * users tabel. Als laatste de url prefixen met 'portal/oauth om
+         * deze te onderscheiden van de standaard login routes.
+         */
+        Passport::routes(null, [
+            'middleware' => ['passport-portal', function ($request, $next) {
+                $request->merge(['scope' => 'use-portal']);
+                return $next($request);
+            }],
+            'prefix' => 'portal/oauth',
+        ]);
+
+        /**
+         * Helperfuncties op Auth facade toevoegen. Zo kan via
+         * \Auth::isPortalUser() snel gecheckt worden of er
+         * een portal gebruiker is ingelogd.
+         */
+        RequestGuard::macro('isPortalUser', function(){
+            return Auth::user() instanceof PortalUser;
+        });
+
+        /**
+         * Tegenovergestelde functie om te checken of
+         * het een gebruiker van Econobis zelf is.
+         */
+        RequestGuard::macro('isAppUser', function(){
+            return Auth::user() instanceof User;
+        });
     }
 }

@@ -6,6 +6,7 @@ import InputDate from '../../../../../components/form/InputDate';
 import InputToggle from '../../../../../components/form/InputToggle';
 import InputMultiSelect from '../../../../../components/form/InputMultiSelect';
 import ViewText from '../../../../../components/form/ViewText';
+import InputReactSelect from '../../../../../components/form/InputReactSelect';
 
 const ProjectFormEditGeneral = ({
     name,
@@ -30,6 +31,7 @@ const ProjectFormEditGeneral = ({
     handleInputChange,
     handleInputChangeDate,
     handleContactGroupIds,
+    handleReactSelectChange,
     projectStatuses,
     administrations,
     hasPaymentInvoices,
@@ -37,6 +39,12 @@ const ProjectFormEditGeneral = ({
     contactGroups,
     errors,
     amountOfParticipants,
+    documentTemplateAgreementId,
+    documentTemplates,
+    emailTemplateAgreementId,
+    emailTemplates,
+    linkAgreeTerms,
+    linkUnderstandInfo,
 }) => {
     let projectStatusCustomOptions = projectStatuses;
 
@@ -215,6 +223,51 @@ const ProjectFormEditGeneral = ({
                     name={'dateEntry'}
                     value={dateEntry}
                     onChangeAction={handleInputChangeDate}
+                />
+            </div>
+
+            <h4>Contacten portal instellingen</h4>
+
+            <div className="row">
+                <InputText
+                    label="Voorwaarden link"
+                    name={'linkAgreeTerms'}
+                    value={linkAgreeTerms}
+                    onChangeAction={handleInputChange}
+                    error={errors.linkAgreeTerms}
+                />
+            </div>
+            <div className="row">
+                <InputText
+                    label="Projectinformatie link"
+                    name={'linkUnderstandInfo'}
+                    value={linkUnderstandInfo}
+                    onChangeAction={handleInputChange}
+                    error={errors.linkUnderstandInfo}
+                />
+            </div>
+            <div className="row">
+                <InputReactSelect
+                    label="Document template inschrijfbevestiging"
+                    name={'documentTemplateAgreementId'}
+                    options={documentTemplates}
+                    value={documentTemplateAgreementId}
+                    onChangeAction={handleReactSelectChange}
+                    // isLoading={peekLoading.documentTemplates}
+                    multi={false}
+                    error={errors.documentTemplateAgreementId}
+                />
+            </div>
+            <div className="row">
+                <InputReactSelect
+                    label="E-mail template inschrijfbevestiging"
+                    name={'emailTemplateAgreementId'}
+                    options={emailTemplates}
+                    value={emailTemplateAgreementId}
+                    onChangeAction={handleReactSelectChange}
+                    // isLoading={peekLoading.emailTemplates}
+                    multi={false}
+                    error={errors.emailTemplateAgreementId}
                 />
             </div>
         </React.Fragment>

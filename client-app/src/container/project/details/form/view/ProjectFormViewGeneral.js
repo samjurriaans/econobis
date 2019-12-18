@@ -25,6 +25,10 @@ const ProjectFormViewGeneral = ({
     administrations,
     hasPaymentInvoices,
     requiresContactGroups,
+    documentTemplateAgreement,
+    emailTemplateAgreement,
+    linkAgreeTerms,
+    linkUnderstandInfo,
 }) => (
     <React.Fragment>
         <h4>Algemeen</h4>
@@ -96,6 +100,26 @@ const ProjectFormViewGeneral = ({
         <div className="row">
             <ViewText label={'Start productie'} value={dateProduction ? moment(dateProduction).format('L') : ''} />
             <ViewText label={'Standaard ingangsdatum mutatie'} value={dateEntry ? moment(dateEntry).format('L') : ''} />
+        </div>
+
+        <h4>Contacten portal instellingen</h4>
+        <div className="row">
+            <ViewText label={'Voorwaarden link'} value={linkAgreeTerms} />
+        </div>
+        <div className="row">
+            <ViewText label={'Projectinformatie link'} value={linkUnderstandInfo} />
+        </div>
+        <div className="row">
+            <ViewText
+                label={'Document template inschrijfbevestiging'}
+                value={documentTemplateAgreement ? documentTemplateAgreement.name : ''}
+            />
+        </div>
+        <div className="row">
+            <ViewText
+                label={'Email template inschrijfbevestiging'}
+                value={emailTemplateAgreement ? emailTemplateAgreement.name : ''}
+            />
         </div>
     </React.Fragment>
 );

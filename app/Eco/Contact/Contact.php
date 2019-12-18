@@ -22,6 +22,7 @@ use App\Eco\ParticipantProject\ParticipantProject;
 use App\Eco\Person\Person;
 use App\Eco\PhoneNumber\PhoneNumber;
 use App\Eco\Project\ProjectRevenueDistribution;
+use App\Eco\Portal\PortalUser;
 use App\Eco\Task\Task;
 use App\Eco\Twinfield\TwinfieldCustomerNumber;
 use App\Eco\User\User;
@@ -29,6 +30,7 @@ use App\Http\Resources\ContactGroup\GridContactGroup;
 use App\Http\Traits\Encryptable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Laracasts\Presenter\PresentableTrait;
 use Venturecraft\Revisionable\RevisionableTrait;
 
@@ -40,13 +42,13 @@ class Contact extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'newsletter' => 'boolean',
         'liable' => 'boolean',
     ];
 
     protected $dates = [
         'member_since',
         'member_until',
+        'date_did_agree_avg',
     ];
 
     protected $encryptable = [
@@ -252,6 +254,11 @@ class Contact extends Model
         return $this->hasManyThrough(Invoice::class, Order::class)->orderBy('invoices.id', 'desc');
     }
 
+    public function portalUser()
+    {
+        return $this->hasOne(PortalUser::class);
+    }
+
     //Returns addresses array as Type - Streetname - Number
     //Primary address always comes first
     public function getPrettyAddresses(){
@@ -352,5 +359,44 @@ class Contact extends Model
         $addressLines['country'] = $address->country ? $address->country->name : '';
 
         return $addressLines;
+    }
+
+    public function getIsParticipantAttribute()
+    {
+        return( $this->participations && $this->participations->count() > 0 );
+    }
+
+    public function getIsParticipantPcrProjectAttribute()
+    {
+        foreach($this->participations as $participation)
+        {
+            if($participation->project && $participation->project->projectType->code_ref == 'postalcode_link_capital' ){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Scope voor filteren van contacten voor portal users.
+     *
+     * Een portal user mag alleen zijn eigen gegevens ophalen
+     * en de gegevens van de contacten waaraan hij via een
+     * occupation is gekoppeld.
+     */
+    public function scopeWhereAuthorizedForPortalUser($query)
+    {
+        $portalUser = Auth::user();
+
+        $query->where(function ($query) use($portalUser) {
+            $query->where('id', $portalUser->contact_id);
+//todo nog even goed checken of dit nu in alle gevallen goed gaat
+//            $query->orWhereHas('occupations', function($query) use($portalUser){
+//                $query->where('primary_contact_id', $portalUser->contact_id);
+//            });
+            $query->orWhereHas('primaryOccupations', function($query) use($portalUser){
+                $query->where('contact_id', $portalUser->contact_id);
+            });
+        });
     }
 }

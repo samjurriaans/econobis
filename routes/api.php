@@ -21,7 +21,7 @@ Route::get('password/reset/{token}', [
 ]);
 
 Route::namespace('Api')
-    ->middleware('auth:api')
+    ->middleware(['auth:api', 'scopes:use-app'])
     ->group(function () {
 
         Route::get('/jobs', 'Job\JobController@getLastJobs');
@@ -115,6 +115,8 @@ Route::namespace('Api')
         Route::post('/contact-note', 'ContactNote\ContactNoteController@store');
         Route::post('/contact-note/{contactNote}', 'ContactNote\ContactNoteController@update');
         Route::post('/contact-note/{contactNote}/delete', 'ContactNote\ContactNoteController@destroy');
+        Route::post('/contact-portal-user/{portalUser}', 'PortalUser\PortalUserController@update');
+        Route::post('/contact-portal-user/{portalUser}/delete', 'PortalUser\PortalUserController@destroy');
 
         Route::post('/contact-energy-supplier', 'ContactEnergySupplier\ContactEnergySupplierController@store');
         Route::post('/contact-energy-supplier/{contactEnergySupplier}', 'ContactEnergySupplier\ContactEnergySupplierController@update');
@@ -444,8 +446,12 @@ Route::namespace('Api')
         Route::get('opportunity-status/jory', 'Opportunity\OpportunityStatusController@jory');
         Route::post('opportunity-status/{opportunityStatus}', 'Opportunity\OpportunityStatusController@update');
 
-        // Jory routes voor ophalen data
-        Route::get( 'jory', '\\'.JoryController::class.'@multiple');
+        Route::get('setting', 'Setting\SettingController@get');
+        Route::get('setting/multiple', 'Setting\SettingController@multiple');
+        Route::post('setting', 'Setting\SettingController@store');
+
+        // Apart voor app en portal ivm toepassen aparte middleware
+        Route::get('jory', '\\'.JoryController::class.'@multiple');
         Route::get('jory/{uri}/count', '\\'.JoryController::class.'@count');
         Route::get('jory/{uri}/{id}', '\\'.JoryController::class.'@show');
         Route::get('jory/{uri}', '\\'.JoryController::class.'@index');
