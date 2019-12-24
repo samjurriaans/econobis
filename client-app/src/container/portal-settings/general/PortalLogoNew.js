@@ -31,7 +31,7 @@ class PortalLogoNew extends Component {
             <Modal closeModal={this.props.toggleShowNew} showConfirmAction={false} title="Upload bestand">
                 <div className="upload-file-content">
                     <Dropzone
-                        accept="image/jpeg, image/png, image/jpg"
+                        accept="image/png"
                         multiple={false}
                         className="dropzone"
                         onDropAccepted={this.onDropAccepted.bind(this)}
@@ -48,7 +48,9 @@ class PortalLogoNew extends Component {
                     <p className="has-error-message">Uploaden mislukt. Probeer nogmaals een bestand te uploaden.</p>
                 )}
                 {this.state.errorMaxSize && (
-                    <p className="has-error-message">Uploaden mislukt. Het bestand mag maximaal 6MB groot zijn.</p>
+                    <p className="has-error-message">
+                        Uploaden mislukt. Het bestand moet bestandstype PNG zijn en mag maximaal 6MB groot zijn.
+                    </p>
                 )}
             </Modal>
         );
