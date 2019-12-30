@@ -40,7 +40,6 @@ class GeneratePortalCss implements ShouldQueue
         ])->render();
         try{
             Storage::disk('public_portal')->put('portal.css', $html);
-            Log::error('Opgeslagen in : ' . Storage::disk('public_portal')->path('portal.css'));
         }catch (Exception $exception){
             Log::error('Opslaan gewijzigde portal.css mislukt : ' . $exception->getMessage());
         }
